@@ -16,6 +16,13 @@ export function login(userData) {
     });
 }
 
+// 회원조회
+export function getUser(userId) {
+    return request(`/users/${userId}`, {
+        method: "GET"
+    });
+}
+
 // 회원정보 수정
 export function updateUser(userId, userData) {
     return request(`/users/${userId}`, {
