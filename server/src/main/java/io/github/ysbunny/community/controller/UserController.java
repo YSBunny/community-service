@@ -24,6 +24,11 @@ public class UserController {
         return userService.login(request);
     }
 
+    @GetMapping("/{userId}")
+    public UserInformationResponse getUser(@PathVariable Long userId) {
+        return userService.getUser(userId);
+    }
+
     @PatchMapping("/{userId}")
     public UpdateUserResponse updateUser(
             @RequestHeader("Authorization") String authorizationHeader,

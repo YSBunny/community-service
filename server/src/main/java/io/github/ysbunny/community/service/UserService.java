@@ -47,6 +47,13 @@ public class UserService {
         return new LoginUserResponse(user.getId(), loginToken);
     }
 
+    public UserInformationResponse getUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+
+        return new UserInformationResponse(user.getEmail(), user.getNickname(), user.getProfileImage());
+    }
+
     @Transactional
     public User updateUser(String loginToken, Long id, UpdateUserRequest request) {
         User loginUser = userRepository.findByLoginToken(loginToken)
