@@ -1,0 +1,10 @@
+package io.github.ysbunny.community.auth.dto.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public class LogoutUserResponse {
+    private String message;
+}
