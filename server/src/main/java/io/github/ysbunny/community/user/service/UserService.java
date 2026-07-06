@@ -1,5 +1,6 @@
 package io.github.ysbunny.community.user.service;
 
+import io.github.ysbunny.community.user.domain.Role;
 import io.github.ysbunny.community.user.domain.User;
 import io.github.ysbunny.community.user.dto.request.CreateUserRequest;
 import io.github.ysbunny.community.auth.dto.request.LoginUserRequest;
@@ -29,7 +30,8 @@ public class UserService {
                 request.getEmail(),
                 request.getPassword(),
                 request.getNickname(),
-                request.getProfileImage()
+                request.getProfileImage(),
+                Role.USER
         );
         return userRepository.save(user);
     }

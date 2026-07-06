@@ -23,6 +23,9 @@ public class User {
     private String nickname;
     private String profileImage;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     private String loginToken;
 
     @OneToMany(mappedBy = "author")
@@ -35,11 +38,12 @@ public class User {
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
-    public User(String email, String password, String nickname, String profileImage) {
+    public User(String email, String password, String nickname, String profileImage, Role role) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.profileImage = profileImage;
+        this.role = role;
     }
 
     public void login(String loginToken) {
