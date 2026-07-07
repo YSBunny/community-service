@@ -24,10 +24,10 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("user not found with email: " + username));
 
         // Spring Security의 UserDetails 객체로 변환
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                Collections.emptyList() // 권한 비워둠
-        );
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getEmail())
+                .password(user.getPassword())
+                .roles(user.getRole().name())
+                .build();
     }
 }
