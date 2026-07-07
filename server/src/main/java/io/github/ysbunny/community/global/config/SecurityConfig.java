@@ -11,6 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
@@ -39,7 +40,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/users").anonymous()
                         .requestMatchers(HttpMethod.POST, "/api/users/login").anonymous()
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
-                );
+                )
+                // 5. 필터 추가: UsernamePasswordAuthenticationFilter 앞에 JwtFilter 배치
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(corsFilter, JwtFilter.class);  // CORS는 맨 앞단 권장
 
         return http.build();
     }
