@@ -39,6 +39,10 @@ public class SecurityConfig {
                         // 회원가입과 로그인은 로그인 하지 않은 사용자 전용
                         .requestMatchers(HttpMethod.POST, "/api/users").anonymous()
                         .requestMatchers(HttpMethod.POST, "/api/users/login").anonymous()
+
+                        .requestMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/posts/**").hasAnyRole("USER", "ADMIN")
+
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
                 // 5. 필터 추가: UsernamePasswordAuthenticationFilter 앞에 JwtFilter 배치
