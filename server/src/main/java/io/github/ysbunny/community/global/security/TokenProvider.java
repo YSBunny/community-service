@@ -8,18 +8,45 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.util.Date;
+import java.util.stream.Collectors;
 
 @Component
 public class TokenProvider {
 
-    private final SecretKey secretKey;
+    private static final String AUTHORITIES_KEY = "auth";
 
-    public TokenProvider(@Value("${jwt.secret}") String secret) {
-        byte[] keyBytes = Decoders.BASE64.decode(secret);
-        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
+    private final SecretKey secretKey;
+    private final long expiration;
+
+    public TokenProvider(@Value("${jwt.secret}") String secret, @Value("${jwt.expiration}") long expiration) {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);   // JWT 서명에 필요한 키 바이트
+        this.secretKey = Keys.hmacShaKeyFor(keyBytes);  // 바이트 배열을 JWT 서명에 사용할 수 있는 SecretKey 객체로 바꿈
+        this.expiration = expiration;   // 토큰 유효 기간
+    }
+
+    // JWT 발급
+    public String createToken(Authentication authentication) {
+        String authorities = authentication.getAuthorities()    // 권한 목록 꺼냄(ROLE_USER, ROLE_ADMIN)
+                .stream()
+                // GrantedAuthority는 Authentication에 부여된 권한, getAuthority()로 문자열 표현을 반환
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        Date now = new Date();
+        Date expirationDate = new Date(now.getTime() + expiration);
+
+        return Jwts.builder()   // JWT 만들기 시작
+                .subject(authentication.getName())  // JWT payload의 sub 값 설정
+                .claim(AUTHORITIES_KEY, authorities)    // JWT payload에 custom claim을 추가
+                .issuedAt(now)  // 토큰 발급 시간
+                .expiration(expirationDate) // 토큰 만료 시간
+                .signWith(secretKey)    // JWT에 서명
+                .compact(); // 설정한 내용을 최종 JWT 문자열로 압축해서 반환
     }
 
     // 토큰 유효성 검사
