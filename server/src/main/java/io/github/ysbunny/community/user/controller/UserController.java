@@ -1,10 +1,8 @@
 package io.github.ysbunny.community.user.controller;
 
-import io.github.ysbunny.community.auth.dto.response.LoginUserResponse;
 import io.github.ysbunny.community.auth.dto.response.LogoutUserResponse;
 import io.github.ysbunny.community.user.domain.User;
 import io.github.ysbunny.community.user.dto.request.CreateUserRequest;
-import io.github.ysbunny.community.auth.dto.request.LoginUserRequest;
 import io.github.ysbunny.community.auth.dto.request.LogoutUserRequest;
 import io.github.ysbunny.community.user.dto.request.UpdateUserRequest;
 import io.github.ysbunny.community.user.dto.response.*;
@@ -23,11 +21,6 @@ public class UserController {
     public CreateUserResponse createUser(@Valid @RequestBody CreateUserRequest request) {
         User saved = userService.createUser(request);
         return new CreateUserResponse(saved.getId());
-    }
-
-    @PostMapping("/login")
-    public LoginUserResponse logIn(@Valid @RequestBody LoginUserRequest request) {
-        return userService.login(request);
     }
 
     @GetMapping("/{userId}")
