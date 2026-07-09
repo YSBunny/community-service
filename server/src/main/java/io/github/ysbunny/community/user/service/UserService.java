@@ -3,10 +3,8 @@ package io.github.ysbunny.community.user.service;
 import io.github.ysbunny.community.user.domain.Role;
 import io.github.ysbunny.community.user.domain.User;
 import io.github.ysbunny.community.user.dto.request.CreateUserRequest;
-import io.github.ysbunny.community.auth.dto.request.LoginUserRequest;
 import io.github.ysbunny.community.auth.dto.request.LogoutUserRequest;
 import io.github.ysbunny.community.user.dto.request.UpdateUserRequest;
-import io.github.ysbunny.community.auth.dto.response.LoginUserResponse;
 import io.github.ysbunny.community.auth.dto.response.LogoutUserResponse;
 import io.github.ysbunny.community.user.dto.response.UserInformationResponse;
 import io.github.ysbunny.community.user.repository.UserRepository;
@@ -15,8 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.UUID;
 
 @Service
 @Validated
@@ -47,21 +43,6 @@ public class UserService {
 
     public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("user not found"));
-    }
-
-    @Transactional
-    public LoginUserResponse login(LoginUserRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("email does not exist"));
-
-        if (!user.getPassword().equals(request.getPassword())) {
-            throw new IllegalArgumentException("password does not match");
-        }
-
-        String loginToken = UUID.randomUUID().toString();
-        user.login(loginToken);
-
-        return new LoginUserResponse(user.getId(), loginToken);
     }
 
     public UserInformationResponse getUser(Long id) {
