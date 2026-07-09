@@ -9,6 +9,7 @@ import io.github.ysbunny.community.auth.dto.response.LogoutUserResponse;
 import io.github.ysbunny.community.user.dto.response.UserInformationResponse;
 import io.github.ysbunny.community.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +46,7 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("user not found"));
     }
 
+    @PreAuthorize("@userRepository.findById(#id).get().getEmail() === authentication.principal.usernmae")
     public UserInformationResponse getUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
@@ -53,6 +55,7 @@ public class UserService {
     }
 
     @Transactional
+    @PreAuthorize("@userRepository.findById(#id).get().getEmail() === authentication.principal.usernmae")
     public User updateUser(String loginToken, Long id, UpdateUserRequest request) {
         User loginUser = userRepository.findByLoginToken(loginToken)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
@@ -76,6 +79,7 @@ public class UserService {
     }
 
     @Transactional
+    @PreAuthorize("@userRepository.findById(#id).get().getEmail() === authentication.principal.usernmae")
     public LogoutUserResponse logout(LogoutUserRequest request) {
         User user = userRepository.findByLoginToken(request.getToken())
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
@@ -86,6 +90,7 @@ public class UserService {
     }
 
     @Transactional
+    @PreAuthorize("@userRepository.findById(#id).get().getEmail() === authentication.principal.usernmae")
     public void deleteUser(String loginToken, Long id) {
         User loginUser = userRepository.findByLoginToken(loginToken)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));

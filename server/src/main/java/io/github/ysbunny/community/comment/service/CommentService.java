@@ -10,6 +10,7 @@ import io.github.ysbunny.community.comment.repository.CommentRepository;
 import io.github.ysbunny.community.post.repository.PostRepository;
 import io.github.ysbunny.community.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -68,6 +69,7 @@ public class CommentService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @commentRepository.findById(#commentId).get().getAuthor() == authentication.principal.username")
     public UpdateCommentResponse updateComment(
             String loginToken,
             Long postId,
@@ -92,6 +94,7 @@ public class CommentService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @commentRepository.findById(#commentId).get().getAuthor() == authentication.principal.username")
     public DeleteCommentResponse deleteComment(String loginToken, Long postId, Long commentId) {
         User user = userRepository.findByLoginToken(loginToken)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
