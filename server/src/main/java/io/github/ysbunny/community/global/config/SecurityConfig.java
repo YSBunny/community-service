@@ -1,6 +1,6 @@
 package io.github.ysbunny.community.global.config;
 
-import io.github.ysbunny.community.global.security.JwtFilter;
+import io.github.ysbunny.community.global.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +21,7 @@ import org.springframework.web.filter.CorsFilter;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtFilter jwtFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CorsFilter corsFilter;    // 별도 설정한 CORS 필터
 
     @Bean
@@ -47,9 +47,9 @@ public class SecurityConfig {
 
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
-                // 5. 필터 추가: UsernamePasswordAuthenticationFilter 앞에 JwtFilter 배치
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(corsFilter, JwtFilter.class);  // CORS는 맨 앞단 권장
+                // 5. 필터 추가: UsernamePasswordAuthenticationFilter 앞에 jwtAuthenticationFilter 배치
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(corsFilter, JwtAuthenticationFilter.class);  // CORS는 맨 앞단 권장
 
         return http.build();
     }
