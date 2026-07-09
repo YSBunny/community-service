@@ -1,14 +1,13 @@
 package io.github.ysbunny.community.global.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -71,8 +70,20 @@ public class TokenProvider {
                 .getPayload();  // payload 부분만 꺼냄
     }
 
-    // Authentication 객체 반환 구현 필요
+    // Authentication 객체 반환
     public Authentication getAuthentication(String token) {
-        return null;
+        // JWT payload의 Claims를 꺼냄
+        Claims claims = parseClaims(token);
+
+        // payload에서 auth 값을 꺼냄
+        String authoritiesClaim = claims.get(AUTHORITIES_KEY, String.class);
+
+        // auth 값을 SimpleGrantedAuthority로 변환
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(authoritiesClaim);
+
+        return new UsernamePasswordAuthenticationToken(
+                claims.getSubject(),    // Claims에서 subject를 꺼냄
+                authority
+        );
     }
 }
