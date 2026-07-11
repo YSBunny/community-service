@@ -15,7 +15,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity // 스프링 시큐리티 필터 체인 활성화
@@ -29,16 +34,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 1. CSRF 비활성화
+                // 1. CORS 설정
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // 2. CSRF 비활성화
                 .csrf(csrf -> csrf.disable())
-                // 2. 폼 로그인, Basic 인증 비활성화
+                // 3. 폼 로그인, Basic 인증 비활성화
                 .formLogin(formLogin -> formLogin.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
-                // 3. 세션 설정: STATELESS
+                // 4. 세션 설정: STATELESS
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                // 4. 권한 설정
+                // 5. 권한 설정
                 .authorizeHttpRequests(auth -> auth
                         // 회원가입과 로그인은 로그인 하지 않은 사용자 전용
                         .requestMatchers(HttpMethod.POST, "/api/users").anonymous()
@@ -49,7 +56,7 @@ public class SecurityConfig {
 
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
-                // 5. 필터 추가: UsernamePasswordAuthenticationFilter 앞에 jwtAuthenticationFilter 배치
+                // 6. 필터 추가: UsernamePasswordAuthenticationFilter 앞에 jwtAuthenticationFilter 배치
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(corsFilter, JwtAuthenticationFilter.class);  // CORS는 맨 앞단 권장
 
@@ -65,5 +72,35 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // 허용할 출처 설정
+        configuration.setAllowedOrigins(List.of("<http://127.0.0.1:5500>", "<http://localhost:5500>"));
+
+        // 허용할 HTTP 메서드 설정
+        configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
+
+        // 허용할 HTTP 헤더 설정
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+
+        // 브라우저에 노출할 헤더 설정
+        configuration.setExposedHeaders(List.of("Custom-Header"));
+
+        // 자격 증명(쿠키, 인증 헤더 등)을 허용할지 여부
+        configuration.setAllowCredentials(true);
+
+        // 예비 요청(Preflight) 결과 캐시 시간 설정
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+        // 모든 경로에 대해 위에서 정의한 CORS 정책 적용
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 }
