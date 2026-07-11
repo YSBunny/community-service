@@ -69,7 +69,8 @@ public class CommentService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or @commentRepository.findById(#commentId).get().getAuthor() == authentication.principal.username")
+    @PreAuthorize("hasRole('ADMIN') or" +
+            "@commentRepository.findById(#postId).get().getAuthor().getEmail() == authentication.name")
     public UpdateCommentResponse updateComment(
             String loginEmail,
             Long postId,
@@ -94,7 +95,8 @@ public class CommentService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or @commentRepository.findById(#commentId).get().getAuthor() == authentication.principal.username")
+    @PreAuthorize("hasRole('ADMIN') or" +
+            "@commentRepository.findById(#postId).get().getAuthor().getEmail() == authentication.name")
     public DeleteCommentResponse deleteComment(String loginEmail, Long postId, Long commentId) {
         User user = userRepository.findByEmail(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));

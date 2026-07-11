@@ -70,7 +70,8 @@ public class PostService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or @postRepository.findById(#postId).get().getAuthor() == authentication.principal.username")
+    @PreAuthorize("hasRole('ADMIN') or" +
+            "@postRepository.findById(#postId).get().getAuthor().getEmail() == authentication.name")
     public UpdatePostResponse updatePost(
             String loginEmail,
             @Positive Long postId,
@@ -97,7 +98,8 @@ public class PostService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or @postRepository.findById(#postId).get().getAuthor() == authentication.principal.username")
+    @PreAuthorize("hasRole('ADMIN') or" +
+            "@postRepository.findById(#postId).get().getAuthor().getEmail() == authentication.name")
     public DeletePostResponse deletePost(String loginEmail, Long postId) {
         User user = userRepository.findByEmail(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
