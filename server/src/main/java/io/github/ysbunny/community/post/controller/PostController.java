@@ -6,6 +6,7 @@ import io.github.ysbunny.community.post.dto.response.*;
 import io.github.ysbunny.community.post.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,12 +18,12 @@ public class PostController {
 
     @PostMapping
     public CreatePostResponse createPost(
-            @RequestHeader("Authorization") String authorizationHeader,
+            Authentication authentication,
             @Valid @RequestBody CreatePostRequest request
     ) {
-        String loginToken = authorizationHeader.replace("Bearer ", "");
+        String email = authentication.getName();
 
-        Long postId = postService.createPost(loginToken, request);
+        Long postId = postService.createPost(email, request);
 
         return new CreatePostResponse(postId);
     }
@@ -39,22 +40,22 @@ public class PostController {
 
     @PatchMapping("/{postId}")
     public UpdatePostResponse updatePost(
-            @RequestHeader("Authorization") String authorizationHeader,
+            Authentication authentication,
             @PathVariable Long postId,
             @Valid @RequestBody UpdatePostRequest request
     ) {
-        String loginToken = authorizationHeader.replace("Bearer ", "");
+        String email = authentication.getName();
 
-        return postService.updatePost(loginToken, postId, request);
+        return postService.updatePost(email, postId, request);
     }
 
     @DeleteMapping("/{postId}")
     public DeletePostResponse deletePost(
-            @RequestHeader("Authorization") String authorizationHeader,
+            Authentication authentication,
             @PathVariable Long postId
     ) {
-        String loginToken = authorizationHeader.replace("Bearer ", "");
+        String email = authentication.getName();
 
-        return postService.deletePost(loginToken, postId);
+        return postService.deletePost(email, postId);
     }
 }

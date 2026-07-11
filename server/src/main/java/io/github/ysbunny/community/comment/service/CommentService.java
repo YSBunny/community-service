@@ -29,11 +29,11 @@ public class CommentService {
 
     @Transactional
     public CreateCommentResponse createComment(
-            String loginToken,
+            String loginEmail,
             Long postId,
             CreateCommentRequest request
     ) {
-        User author = userRepository.findByLoginToken(loginToken)
+        User author = userRepository.findByEmail(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
         Post post = postRepository.findById(postId)
@@ -71,12 +71,12 @@ public class CommentService {
     @Transactional
     @PreAuthorize("hasRole('ADMIN') or @commentRepository.findById(#commentId).get().getAuthor() == authentication.principal.username")
     public UpdateCommentResponse updateComment(
-            String loginToken,
+            String loginEmail,
             Long postId,
             Long commentId,
             UpdateCommentRequest request
     ) {
-        User user = userRepository.findByLoginToken(loginToken)
+        User user = userRepository.findByEmail(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
         postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("post does not exist"));
@@ -95,8 +95,8 @@ public class CommentService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN') or @commentRepository.findById(#commentId).get().getAuthor() == authentication.principal.username")
-    public DeleteCommentResponse deleteComment(String loginToken, Long postId, Long commentId) {
-        User user = userRepository.findByLoginToken(loginToken)
+    public DeleteCommentResponse deleteComment(String loginEmail, Long postId, Long commentId) {
+        User user = userRepository.findByEmail(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
         postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("post does not exist"));

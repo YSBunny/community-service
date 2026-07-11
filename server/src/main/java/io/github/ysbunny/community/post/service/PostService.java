@@ -27,8 +27,8 @@ public class PostService {
     private final PostRepository postRepository;
 
     @Transactional
-    public Long createPost(String loginToken, CreatePostRequest request) {
-        User author = userRepository.findByLoginToken(loginToken)
+    public Long createPost(String loginEmail, CreatePostRequest request) {
+        User author = userRepository.findByEmail(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
         Post post = new Post(
@@ -72,11 +72,11 @@ public class PostService {
     @Transactional
     @PreAuthorize("hasRole('ADMIN') or @postRepository.findById(#postId).get().getAuthor() == authentication.principal.username")
     public UpdatePostResponse updatePost(
-            String loginToken,
+            String loginEmail,
             @Positive Long postId,
             @Valid UpdatePostRequest request
     ) {
-        User user = userRepository.findByLoginToken(loginToken)
+        User user = userRepository.findByEmail(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
         Post post = postRepository.findById(postId)
@@ -98,8 +98,8 @@ public class PostService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN') or @postRepository.findById(#postId).get().getAuthor() == authentication.principal.username")
-    public DeletePostResponse deletePost(String loginToken, Long postId) {
-        User user = userRepository.findByLoginToken(loginToken)
+    public DeletePostResponse deletePost(String loginEmail, Long postId) {
+        User user = userRepository.findByEmail(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
         Post post = postRepository.findById(postId)

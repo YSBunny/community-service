@@ -9,6 +9,7 @@ import io.github.ysbunny.community.comment.dto.response.UpdateCommentResponse;
 import io.github.ysbunny.community.comment.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,13 +21,13 @@ public class CommentController {
 
     @PostMapping
     public CreateCommentResponse createComment(
-            @RequestHeader("Authorization") String authorizationHeader,
+            Authentication authentication,
             @PathVariable Long postId,
             @Valid @RequestBody CreateCommentRequest request
     ) {
-        String loginToken = authorizationHeader.replace("Bearer ", "");
+        String email = authentication.getName();
 
-        return commentService.createComment(loginToken, postId, request);
+        return commentService.createComment(email, postId, request);
     }
 
     @GetMapping
@@ -36,24 +37,24 @@ public class CommentController {
 
     @PatchMapping("/{commentId}")
     public UpdateCommentResponse updateComment(
-            @RequestHeader("Authorization") String authorizationHeader,
+            Authentication authentication,
             @PathVariable Long postId,
             @PathVariable Long commentId,
             @Valid @RequestBody UpdateCommentRequest request
     ) {
-        String loginToken = authorizationHeader.replace("Bearer ", "");
+        String email = authentication.getName();
 
-        return  commentService.updateComment(loginToken, postId, commentId, request);
+        return  commentService.updateComment(email, postId, commentId, request);
     }
 
     @DeleteMapping("/{commentId}")
     public DeleteCommentResponse deleteComment(
-            @RequestHeader("Authorization") String authorizationHeader,
+            Authentication authentication,
             @PathVariable Long postId,
             @PathVariable Long commentId
     ) {
-        String loginToken = authorizationHeader.replace("Bearer ", "");
+        String email = authentication.getName();
 
-        return commentService.deleteComment(loginToken, postId, commentId);
+        return commentService.deleteComment(email, postId, commentId);
     }
 }

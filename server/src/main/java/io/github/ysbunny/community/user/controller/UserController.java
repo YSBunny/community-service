@@ -7,6 +7,7 @@ import io.github.ysbunny.community.user.dto.response.*;
 import io.github.ysbunny.community.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,31 +23,33 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public UserInformationResponse getUser(@PathVariable Long userId) {
-        return userService.getUser(userId);
+    public UserInformationResponse getUser(Authentication authentication, @PathVariable Long userId) {
+        String email = authentication.getName();
+
+        return userService.getUser(email, userId);
     }
 
     @PatchMapping("/{userId}")
     public UpdateUserResponse updateUser(
-            @RequestHeader("Authorization") String authorizationHeader,
+            Authentication authentication,
             @PathVariable Long userId,
             @Valid @RequestBody UpdateUserRequest request
     ) {
-        String loginToken = authorizationHeader.replace("Bearer ", "");
+        String email = authentication.getName();
 
-        User updated = userService.updateUser(loginToken, userId, request);
+        User updated = userService.updateUser(email, userId, request);
 
         return new UpdateUserResponse(updated.getNickname(), updated.getProfileImage());
     }
 
     @DeleteMapping("/{userId}")
     public DeleteUserResponse deleteUser(
-            @RequestHeader("Authorization") String authorizationHeader,
+            Authentication authentication,
             @PathVariable Long userId
     ) {
-        String loginToken = authorizationHeader.replace("Bearer ", "");
+        String email = authentication.getName();
 
-        userService.deleteUser(loginToken, userId);
+        userService.deleteUser(email, userId);
 
         return new DeleteUserResponse("withdraw_success");
     }
