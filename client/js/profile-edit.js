@@ -145,6 +145,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             try {
                 const result = await deleteUser(userId, userData);
 
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("userId");
+
                 console.log(result);
             } catch (error) {
                 alert(error.message);
