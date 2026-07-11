@@ -11,6 +11,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -79,11 +81,18 @@ public class TokenProvider {
         String authoritiesClaim = claims.get(AUTHORITIES_KEY, String.class);
 
         // auth 값을 SimpleGrantedAuthority로 변환
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(authoritiesClaim);
+        Collection<? extends GrantedAuthority> authorities =
+                // auth 값을 "," 기준으로 분리하여 배열에 저장하고 Stream으로 바꿈
+                Arrays.stream(authoritiesClaim.split(","))
+                        // 각 auth 값을 GrantedAuthority 객체로 변환
+                        .map(SimpleGrantedAuthority::new)
+                        .toList();
 
+        // 인증 완료된 Authentication 객체 생성
         return new UsernamePasswordAuthenticationToken(
                 claims.getSubject(),    // Claims에서 subject를 꺼냄
-                authority
+                null,   // credentials = null
+                authorities // SimpleGrantedAuthority로 변환한 auth 컬렉션
         );
     }
 }
