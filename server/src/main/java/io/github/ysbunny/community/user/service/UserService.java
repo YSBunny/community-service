@@ -65,7 +65,7 @@ public class UserService {
         }
 
         if (request.getPassword() != null) {
-            findUser.changePassword(request.getPassword());
+            findUser.changePassword(passwordEncoder.encode(request.getPassword()));
         }
         if (request.getNickname() != null) {
             findUser.changeNickname(request.getNickname());
