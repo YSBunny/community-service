@@ -40,10 +40,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User findById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("user not found"));
-    }
-
     @PreAuthorize("@userRepository.findById(#id).get().getEmail() == authentication.name")
     public UserInformationResponse getUser(String loginEmail, Long id) {
         User user = userRepository.findByEmail(loginEmail)
@@ -58,7 +54,8 @@ public class UserService {
         User loginUser = userRepository.findByEmail(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
-        User findUser = findById(id);
+        User findUser = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
         if (!loginUser.getId().equals(findUser.getId())) {
             throw new IllegalArgumentException("unauthorized user");
@@ -82,7 +79,8 @@ public class UserService {
         User loginUser = userRepository.findByEmail(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
-        User findUser = findById(id);
+        User findUser = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
         if (!loginUser.getId().equals(findUser.getId())) {
             throw new IllegalArgumentException("unauthorized user");
