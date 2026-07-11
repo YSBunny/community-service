@@ -45,9 +45,9 @@ public class SecurityConfig {
                 )
                 // 5. 권한 설정
                 .authorizeHttpRequests(auth -> auth
-                        // 회원가입과 로그인은 로그인 하지 않은 사용자 전용
-                        .requestMatchers(HttpMethod.POST, "/api/users").anonymous()
-                        .requestMatchers(HttpMethod.POST, "/api/users/login").anonymous()
+                        // 회원가입과 로그인은 모두에게 접근 허용
+                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
 
                         .requestMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/posts/**").hasAnyRole("USER", "ADMIN")
