@@ -1,9 +1,7 @@
 package io.github.ysbunny.community.user.controller;
 
-import io.github.ysbunny.community.auth.dto.response.LogoutUserResponse;
 import io.github.ysbunny.community.user.domain.User;
 import io.github.ysbunny.community.user.dto.request.CreateUserRequest;
-import io.github.ysbunny.community.auth.dto.request.LogoutUserRequest;
 import io.github.ysbunny.community.user.dto.request.UpdateUserRequest;
 import io.github.ysbunny.community.user.dto.response.*;
 import io.github.ysbunny.community.user.service.UserService;
@@ -39,11 +37,6 @@ public class UserController {
         User updated = userService.updateUser(loginToken, userId, request);
 
         return new UpdateUserResponse(updated.getNickname(), updated.getProfileImage());
-    }
-
-    @PostMapping("/logout")
-    public LogoutUserResponse logout(@Valid @RequestBody LogoutUserRequest request) {
-        return userService.logout(request);
     }
 
     @DeleteMapping("/{userId}")

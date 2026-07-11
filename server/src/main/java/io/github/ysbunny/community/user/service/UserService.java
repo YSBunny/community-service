@@ -3,9 +3,7 @@ package io.github.ysbunny.community.user.service;
 import io.github.ysbunny.community.user.domain.Role;
 import io.github.ysbunny.community.user.domain.User;
 import io.github.ysbunny.community.user.dto.request.CreateUserRequest;
-import io.github.ysbunny.community.auth.dto.request.LogoutUserRequest;
 import io.github.ysbunny.community.user.dto.request.UpdateUserRequest;
-import io.github.ysbunny.community.auth.dto.response.LogoutUserResponse;
 import io.github.ysbunny.community.user.dto.response.UserInformationResponse;
 import io.github.ysbunny.community.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -76,17 +74,6 @@ public class UserService {
             findUser.changeProfileImage(request.getProfileImage());
         }
         return findUser;
-    }
-
-    @Transactional
-    @PreAuthorize("@userRepository.findById(#id).get().getEmail() === authentication.principal.usernmae")
-    public LogoutUserResponse logout(LogoutUserRequest request) {
-        User user = userRepository.findByLoginToken(request.getToken())
-                .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
-
-        user.logout();
-
-        return new LogoutUserResponse("logout success");
     }
 
     @Transactional

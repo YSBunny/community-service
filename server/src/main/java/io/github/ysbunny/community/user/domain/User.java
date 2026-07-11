@@ -26,8 +26,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private String loginToken;
-
     @OneToMany(mappedBy = "author")
     private List<Post> posts = new ArrayList<>();
 
@@ -44,14 +42,6 @@ public class User {
         this.nickname = nickname;
         this.profileImage = profileImage;
         this.role = role;
-    }
-
-    public void login(String loginToken) {
-        this.loginToken = loginToken;
-    }
-
-    public void logout() {
-        this.loginToken = null;
     }
 
     public void changePassword(String password) {
