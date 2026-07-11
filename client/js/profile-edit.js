@@ -1,4 +1,5 @@
-import { getUser, updateUser, logout, deleteUser } from './api/userApi.js';
+import { getUser, updateUser, deleteUser } from './api/userApi.js';
+import { logout } from './api/authApi.js';
 
 document.addEventListener("DOMContentLoaded", async function () {
     const profileMenuButton = document.querySelector("#profileMenuButton");
@@ -30,13 +31,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // 4. 드롭다운 로그아웃 버튼 누르면 로그아웃 후 로그인 페이지로 이동
     logoutButton.addEventListener("click", async () => {
-        const userData = {
-            token: localStorage.getItem("loginToken")
-        };
-        
-        const result = await logout(userData);
+        try {
+            await logout();
 
-        window.location.href = `./login.html`;
+            localStorage.removeItem("accessToken");
+
+            window.location.href = `./login.html`;
+        } catch (error) {
+            alert(error.message);
+        }
     });
 
     // localStorage에서 userId 가져옴
@@ -135,7 +138,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         confirmWithdrawButton.addEventListener("click", async (event) => {
             const userId = localStorage.getItem("userId");
             const userData = {
-                token: localStorage.getItem("loginToken")
+                token: localStorage.getItem("accessToken")
             };
 
             try {

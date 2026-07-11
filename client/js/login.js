@@ -1,4 +1,4 @@
-import { login } from "./api/userApi.js";
+import { login } from "./api/authApi.js";
  
 const loginForm = document.querySelector("#loginForm");
 
@@ -14,27 +14,27 @@ loginForm.addEventListener("submit", async (event) => {
     // 2. 로그인 폼 제출 기본 동작 막음
     event.preventDefault();
 
-    // 이메일 값, 비밀번호 값 가져와서 userData 객체 생성
-    const userData = {
+    // 이메일 값, 비밀번호 값 가져와서 loginData 객체 생성
+    const loginData = {
         email: emailInput.value.trim(),
         password: passwordInput.value.trim()
     }
 
-    console.log("로그인 요청 데이터:", userData);
+    console.log("로그인 요청 데이터:", loginData);
 
     // 4. 이메일과 비밀번호 모두 값이 있을 때 로그인되어 게시글 목록으로 이동
-    if (userData.email !== "" && userData.password !== "") {
+    if (loginData.email !== "" && loginData.password !== "") {
         try {
-            // userData 객체를 백엔드에 보내고 받은 JSON userId와 토큰을 result에 저장
-            const result = await login(userData);
+            // loginData 객체를 백엔드에 보내고 받은 JSON userId와 토큰을 result에 저장
+            const result = await login(loginData);
 
             console.log("로그인 응답:", result);
 
             localStorage.setItem("userId", result.userId);
-            localStorage.setItem("loginToken", result.token);
+            localStorage.setItem("accessToken", result.token);
 
             console.log("저장된 userId:", localStorage.getItem("userId"));
-            console.log("저장된 loginToken:", localStorage.getItem("loginToken"));
+            console.log("저장된 accessToken:", localStorage.getItem("accessToken"));
 
             window.location.href = `./posts.html`;
         } catch (error) {
