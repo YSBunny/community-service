@@ -44,7 +44,7 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("user not found"));
     }
 
-    @PreAuthorize("@userRepository.findById(#id).get().getEmail() === authentication.name")
+    @PreAuthorize("@userRepository.findById(#id).get().getEmail() == authentication.name")
     public UserInformationResponse getUser(String loginEmail, Long id) {
         User user = userRepository.findByEmail(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
@@ -53,7 +53,7 @@ public class UserService {
     }
 
     @Transactional
-    @PreAuthorize("@userRepository.findById(#id).get().getEmail() === authentication.name")
+    @PreAuthorize("@userRepository.findById(#id).get().getEmail() == authentication.name")
     public User updateUser(String loginEmail, Long id, UpdateUserRequest request) {
         User loginUser = userRepository.findByEmail(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
@@ -77,7 +77,7 @@ public class UserService {
     }
 
     @Transactional
-    @PreAuthorize("@userRepository.findById(#id).get().getEmail() === authentication.name")
+    @PreAuthorize("@userRepository.findById(#id).get().getEmail() == authentication.name")
     public void deleteUser(String loginEmail, Long id) {
         User loginUser = userRepository.findByEmail(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
