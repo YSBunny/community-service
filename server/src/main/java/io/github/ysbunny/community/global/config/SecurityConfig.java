@@ -18,7 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
@@ -29,7 +28,6 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final CorsFilter corsFilter;    // 별도 설정한 CORS 필터
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -57,8 +55,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
                 // 6. 필터 추가: UsernamePasswordAuthenticationFilter 앞에 jwtAuthenticationFilter 배치
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(corsFilter, JwtAuthenticationFilter.class);  // CORS는 맨 앞단 권장
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -79,16 +76,13 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // 허용할 출처 설정
-        configuration.setAllowedOrigins(List.of("<http://127.0.0.1:5500>", "<http://localhost:5500>"));
+        configuration.setAllowedOrigins(List.of("http://127.0.0.1:5500", "http://localhost:5500"));
 
         // 허용할 HTTP 메서드 설정
         configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
 
         // 허용할 HTTP 헤더 설정
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-
-        // 브라우저에 노출할 헤더 설정
-        configuration.setExposedHeaders(List.of("Custom-Header"));
 
         // 자격 증명(쿠키, 인증 헤더 등)을 허용할지 여부
         configuration.setAllowCredentials(true);
