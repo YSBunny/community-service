@@ -36,6 +36,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // 2. CSRF 비활성화
                 .csrf(csrf -> csrf.disable())
+                // H2 프레임을 통한 접근 허용
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.sameOrigin()))
                 // 3. 폼 로그인, Basic 인증 비활성화
                 .formLogin(formLogin -> formLogin.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
@@ -48,6 +51,9 @@ public class SecurityConfig {
                         // 회원가입과 로그인은 모두에게 접근 허용
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+
+                        // H2 콘솔 접근 허용
+                        .requestMatchers("/h2-console/**").permitAll()
 
                         .requestMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/posts/**").hasAnyRole("USER", "ADMIN")
