@@ -2,8 +2,36 @@ import { createPost, getPost, updatePost } from "./api/postApi.js";
 
 // 0. HTML이 다 로드된 뒤 이벤트 리스너를 등록
 document.addEventListener("DOMContentLoaded", async function () {
+    const backButton = document.querySelector("#backButton");
+
     const profileMenuButton = document.querySelector("#profileMenuButton");
     const profileDropdown = document.querySelector("#profileDropdown");
+
+    // 1. 게시글 폼, 제목 폼, 내용 폼, 안내 문구 가져옴
+    const postForm = document.querySelector("#postForm");
+    const titleInput = document.querySelector("#title");
+    const contentInput = document.querySelector("#content");
+    const postImage = document.querySelector("#postImage");
+    const helperText = document.querySelector("#helperText");
+
+    // 1. URL 파라미터 가져옴
+    const params = new URLSearchParams(window.location.search);
+
+    // 2. postID 값과 mode 값 가져옴
+    const postId = params.get("postId");
+    const mode = params.get("mode");
+
+    // 3. 폼 제목과 제출 버튼 문구 가져옴
+    const formTitle = document.querySelector("#formTitle");
+    const submitButton = document.querySelector("#submitButton");
+
+    backButton.addEventListener("click", () => {
+        if (mode === "edit") {
+            window.location.href = `./post-detail.html?postId=${postId}`;
+        } else {
+            window.location.href = `./posts.html`;
+        }
+    });
 
     // 2. 프로필 메뉴 누르면 드롭다운 보이게
     profileMenuButton.addEventListener("click", () => {
@@ -42,24 +70,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             alert(error.message);
         }
     });
-
-    // 1. 게시글 폼, 제목 폼, 내용 폼, 안내 문구 가져옴
-    const postForm = document.querySelector("#postForm");
-    const titleInput = document.querySelector("#title");
-    const contentInput = document.querySelector("#content");
-    const postImage = document.querySelector("#postImage");
-    const helperText = document.querySelector("#helperText");
-
-    // 1. URL 파라미터 가져옴
-    const params = new URLSearchParams(window.location.search);
-
-    // 2. postID 값과 mode 값 가져옴
-    const postId = params.get("postId");
-    const mode = params.get("mode");
-
-    // 3. 폼 제목과 제출 버튼 문구 가져옴
-    const formTitle = document.querySelector("#formTitle");
-    const submitButton = document.querySelector("#submitButton");
 
     // 수정 모드라면 폼 제목과 버튼 문구 수정하고 해당 게시글 데이터 불러오기
     if (mode === "edit") {
