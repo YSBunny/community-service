@@ -68,6 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (
             email !== "" && password !== "" && passwordConfirm !== "" && nickname !== ""
             && emailPattern.test(email) && passwordPattern.test(password)
+            && password === passwordConfirm
         ) {
             signupButton.disabled = false;
         } else {
@@ -107,6 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     passwordConfirmInput.addEventListener("input", () => {
+        const password = passwordInput.value.trim();
         const passwordConfirm = passwordConfirmInput.value.trim();
 
         checkPostForm();
@@ -114,6 +116,8 @@ document.addEventListener("DOMContentLoaded", function () {
         // 4. 비밀번호 확인 값 여부에 따라 안내 문구 여부 변경
         if (passwordConfirm === "") {
             passwordConfirmHelperText.textContent = "* 비밀번호 확인을 입력해주세요.";
+        } else if (password !== passwordConfirm) {
+            passwordConfirmHelperText.textContent = "* 비밀번호가 다릅니다.";
         } else {
             passwordConfirmHelperText.textContent = "";
         }

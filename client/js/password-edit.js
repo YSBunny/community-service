@@ -48,7 +48,10 @@ function checkPasswordEditForm() {
     const passwordConfirm = passwordConfirmInput.value.trim();
 
     // 5. 비밀번호과 비밀번호 확인 모두 작성 되었으면 제출 버튼 보이게, 하나라도 작성 안 되어있으면 제출 버튼 안 보이게 함
-    if (password !== "" && passwordConfirm !== "" && passwordPattern.test(password)) {
+    if (
+        password !== "" && passwordConfirm !== "" && passwordPattern.test(password)
+        && password === passwordConfirm
+    ) {
         passwordEditButton.disabled = false;
     } else {
         passwordEditButton.disabled = true;
@@ -74,11 +77,14 @@ passwordInput.addEventListener("input", () => {
 
 passwordConfirmInput.addEventListener("input", () => {
     // 2. 비밀번호 확인 값 가져옴
+    const password = passwordInput.value.trim();
     const passwordConfirm = passwordConfirmInput.value.trim();
 
     // 3. 비밀번호 확인 값 여부에 따라 안내 문구 여부 결정
     if (passwordConfirm === "") {
         passwordConfirmHelperText.textContent = "* 비밀번호 확인을 입력해주세요.";
+    } else if (password !== passwordConfirm) {
+            passwordConfirmHelperText.textContent = "* 비밀번호가 다릅니다.";
     } else {
         passwordConfirmHelperText.textContent = "";
     }
