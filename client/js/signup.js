@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const nicknameInput = document.querySelector("#nickname");
     const profileImage = document.querySelector("#profileImage");
 
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     const emailHelperText = document.querySelector("#emailHelperText");
     const passwordHelperText = document.querySelector("#passwordHelperText");
     const passwordConfirmHelperText = document.querySelector("#passwordConfirmHelperText");
@@ -61,7 +63,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const nickname = nicknameInput.value.trim();
 
         // 3. 이메일, 비밀번호, 비밀번호 확인, 닉네임 모두 있으면 회원가입 버튼 활성화
-        if (email !== "" && password !== "" && passwordConfirm !== "" && nickname !== "") {
+        if (email !== "" && password !== "" && passwordConfirm !== "" && nickname !== ""
+            && emailPattern.test(email)
+        ) {
             signupButton.disabled = false;
         } else {
             signupButton.disabled = true;
@@ -76,6 +80,8 @@ document.addEventListener("DOMContentLoaded", function () {
         // 4. 이메일 값 여부에 따라 안내 문구 여부 변경
         if (email === "") {
             emailHelperText.textContent = "* 이메일을 입력해주세요.";
+        } else if (!emailPattern.test(email)) {
+            emailHelperText.textContent = "* 올바른 이메일 주소 형식을 입력해주세요.";
         } else {
             emailHelperText.textContent = "";
         }

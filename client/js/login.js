@@ -5,6 +5,8 @@ const loginForm = document.querySelector("#loginForm");
 const emailInput = document.querySelector("#email");
 const passwordInput = document.querySelector("#password");
 
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const emailHelperText = document.querySelector("#emailHelperText");
 const passwordHelperText = document.querySelector("#passwordHelperText");
 
@@ -51,12 +53,14 @@ emailInput.addEventListener("input", () => {
     // 3. 이메일 값 여부에 따라 안내 문구 여부 변경
     if (email === "") {
         emailHelperText.textContent = "* 이메일을 입력해주세요.";
+    } else if (!emailPattern.test(email)) {
+            emailHelperText.textContent = "* 올바른 이메일 주소 형식을 입력해주세요.";
     } else {
         emailHelperText.textContent = "";
     }
 
     // 4. 이메일과 비밀번호 값 둘 다 있으면 로그인 버튼 활성화
-    if (email !== "" && password !== "") {
+    if (email !== "" && password !== "" && emailPattern.test(email)) {
         loginButton.disabled = false;
     } else {
         loginButton.disabled = true;
@@ -76,7 +80,7 @@ passwordInput.addEventListener("input", () => {
     }
 
     // 4. 이메일과 비밀번호 값 둘 다 있으면 로그인 버튼 활성화
-    if (email !== "" && password !== "") {
+    if (email !== "" && password !== "" && emailPattern.test(email)) {
         loginButton.disabled = false;
     } else {
         loginButton.disabled = true;
