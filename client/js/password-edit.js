@@ -1,8 +1,14 @@
 import { updatePassword } from "./api/userApi.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
+    const backButton = document.querySelector("#backButton");
+
     const profileMenuButton = document.querySelector("#profileMenuButton");
     const profileDropdown = document.querySelector("#profileDropdown");
+
+    backButton.addEventListener("click", () => {
+        window.location.href = `./posts.html`;
+    });
 
     // 2. 프로필 메뉴 누르면 드롭다운 보이게
     profileMenuButton.addEventListener("click", () => {
