@@ -2,7 +2,48 @@ import { getPosts } from './api/postApi.js';
 
 // 0. HTML이 다 로드된 뒤 이벤트 리스너를 등록
 document.addEventListener("DOMContentLoaded", async function () {
+    const profileMenuButton = document.querySelector("#profileMenuButton");
+    const profileDropdown = document.querySelector("#profileDropdown");
+
     const postList = document.querySelector("#postList");
+
+    // 2. 프로필 메뉴 누르면 드롭다운 보이게
+    profileMenuButton.addEventListener("click", () => {
+        profileDropdown.classList.toggle("is-hidden");
+    });
+
+    // 3. 드롭다운의 회원정보 수정 버튼 가져옴
+    const profileEditButton = document.querySelector("#profileEditButton");
+
+    // 4. 드롭다운 회원정보 수정 버튼 누르면 다시 회원정보 수정 페이지 로드
+    profileEditButton.addEventListener("click", () => {
+        window.location.href = `./profile-edit.html`;
+    });
+
+    // 3. 드롭다운의 비밀번호 수정 버튼 가져옴
+    const passwordEditButton = document.querySelector("#passwordEditButton");
+
+    // 4. 드롭다운 비밀번호 수정 버튼 누르면 비밀번호 수정 페이지로 이동
+    passwordEditButton.addEventListener("click", () => {
+        window.location.href = `./password-edit.html`;
+    });
+
+    // 3. 드롭다운의 로그아웃 버튼 가져옴
+    const logoutButton = document.querySelector("#logoutButton");
+
+    // 4. 드롭다운 로그아웃 버튼 누르면 로그아웃 후 로그인 페이지로 이동
+    logoutButton.addEventListener("click", async () => {
+        try {
+            await logout();
+
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("userId");
+
+            window.location.href = `./login.html`;
+        } catch (error) {
+            alert(error.message);
+        }
+    });
 
     try {
         const result = await getPosts();
