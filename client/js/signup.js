@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const profileImage = document.querySelector("#profileImage");
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordPattern =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,20}$/;
 
     const emailHelperText = document.querySelector("#emailHelperText");
     const passwordHelperText = document.querySelector("#passwordHelperText");
@@ -63,8 +65,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const nickname = nicknameInput.value.trim();
 
         // 3. 이메일, 비밀번호, 비밀번호 확인, 닉네임 모두 있으면 회원가입 버튼 활성화
-        if (email !== "" && password !== "" && passwordConfirm !== "" && nickname !== ""
-            && emailPattern.test(email)
+        if (
+            email !== "" && password !== "" && passwordConfirm !== "" && nickname !== ""
+            && emailPattern.test(email) && passwordPattern.test(password)
         ) {
             signupButton.disabled = false;
         } else {
@@ -95,6 +98,9 @@ document.addEventListener("DOMContentLoaded", function () {
         // 4. 비밀번호 값 여부에 따라 안내 문구 여부 변경
         if (password === "") {
             passwordHelperText.textContent = "* 비밀번호을 입력해주세요.";
+        } else if (!passwordPattern.test(password)) {
+            passwordHelperText.textContent =
+                "* 비밀번호는 8자 이상, 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.";
         } else {
             passwordHelperText.textContent = "";
         }

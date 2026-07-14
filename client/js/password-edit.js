@@ -4,6 +4,8 @@ import { updatePassword } from "./api/userApi.js";
 const passwordEditForm = document.querySelector("#passwordEditForm");
 const passwordInput = document.querySelector("#password");
 const passwordConfirmInput = document.querySelector("#passwordConfirm");
+const passwordPattern =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,20}$/;
 const passwordHelperText = document.querySelector("#passwordHelperText");
 const passwordConfirmHelperText = document.querySelector("#passwordConfirmHelperText");
 const passwordEditButton = document.querySelector("#passwordEditButton");
@@ -46,7 +48,7 @@ function checkPasswordEditForm() {
     const passwordConfirm = passwordConfirmInput.value.trim();
 
     // 5. 비밀번호과 비밀번호 확인 모두 작성 되었으면 제출 버튼 보이게, 하나라도 작성 안 되어있으면 제출 버튼 안 보이게 함
-    if (password !== "" && passwordConfirm !== "") {
+    if (password !== "" && passwordConfirm !== "" && passwordPattern.test(password)) {
         passwordEditButton.disabled = false;
     } else {
         passwordEditButton.disabled = true;
@@ -60,6 +62,9 @@ passwordInput.addEventListener("input", () => {
     // 3. 비밀번호 값 여부에 따라 안내 문구 여부 결정
     if (password === "") {
         passwordHelperText.textContent = "* 비밀번호를 입력해주세요.";
+    } else if (!passwordPattern.test(password)) {
+        passwordHelperText.textContent =
+            "* 비밀번호는 8자 이상, 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.";
     } else {
         passwordHelperText.textContent = "";
     }
