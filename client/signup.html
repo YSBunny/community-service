@@ -26,20 +26,29 @@
       <h2 class="page-title">회원가입</h2>
 
       <form id="signupForm" class="signup-form">
-        <div class="profile-image-section">
-          <p class="profile-image-label">프로필 사진</p>
+        <div class="profile-form-group">
+          <p class="profile-label">프로필 사진*</p>
 
           <input
             type="file"
             id="profileImage"
             name="profileImage"
-            class="profile-image-input"
+            class="profile-input"
             accept="image/*"
           />
 
-          <label for="profileImage" class="profile-image-button">
-            <span class="profile-plus">+</span>
+          <label for="profileImage" class="profile-upload-button">
+            <img
+              src=""
+              alt="프로필 이미지 미리보기"
+              class="profile-preview is-hidden"
+              id="profilePreview"
+            />
+
+            <span class="profile-plus" id="profilePlus">+</span>
           </label>
+
+          <p class="helper-text" id="profileHelperText"></p>
         </div>
 
         <div class="form-fields">

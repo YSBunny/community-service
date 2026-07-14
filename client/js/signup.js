@@ -5,16 +5,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const signupForm = document.querySelector("#signupForm");
 
+    const profileImageInput = document.querySelector("#profileImage");
+    const profilePreview = document.querySelector("#profilePreview");
+    const profilePlus = document.querySelector("#profilePlus");
     const emailInput = document.querySelector("#email");
     const passwordInput = document.querySelector("#password");
     const passwordConfirmInput = document.querySelector("#passwordConfirm");
     const nicknameInput = document.querySelector("#nickname");
-    const profileImage = document.querySelector("#profileImage");
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordPattern =
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,20}$/;
 
+    const profileHelperText = document.querySelector("profileHelperText");
     const emailHelperText = document.querySelector("#emailHelperText");
     const passwordHelperText = document.querySelector("#passwordHelperText");
     const passwordConfirmHelperText = document.querySelector("#passwordConfirmHelperText");
@@ -34,15 +37,16 @@ document.addEventListener("DOMContentLoaded", function () {
             email: emailInput.value.trim(),
             password: passwordInput.value.trim(),
             nickname: nicknameInput.value.trim(),
-            profileImage: profileImage.value
+            profileImage: profileImageInput.value
         }
 
         console.log("회원가입 요청 데이터:", userData);
         
-        // 3. 이메일, 비밀번호, 비밀번호 확인, 닉네임 모두 입력됐으면 로그인 가능
-        if (!(userData.email === "" || userData.password === ""
-            || userData.passwordConfirm === "" || userData.nickname === "")) {
-            
+        // 3. 이메일, 비밀번호, 비밀번호 확인, 닉네임 모두 입력됐으면 회원가입 가능
+        if (
+            !(userData.email === "" || userData.password === ""
+            || userData.passwordConfirm === "" || userData.nickname === "")
+        ) {
             try {
                 // userData 객체를 백엔드에 보내고 받은 JSON userId를 result에 저장
                 const result = await signup(userData);
@@ -75,6 +79,27 @@ document.addEventListener("DOMContentLoaded", function () {
             signupButton.disabled = true;
         }
     }
+
+    profileImageInput.addEventListener("change", () => {
+        const selectedFile = profileImageInput.files[0];
+
+        if (!selectedFile) {
+            return;
+        }
+
+        if (!selectedFile.type.startsWith("image/")) {
+            profileHelperText.textContent = "* 이미지 파일을 선택해주세요.";
+            profileImageInput.value = "";
+            return;
+        }
+
+        const imageUrl = URL.createObjectURL(selectedFile);
+
+        profilePreview.src = imageUrl;
+        profilePreview.classList.remove("is-hidden");
+        profilePlus.classList.add("is-hidden");
+        profileHelperText.textContent = "";
+    });
 
     emailInput.addEventListener("input", () => {
         const email = emailInput.value.trim();
