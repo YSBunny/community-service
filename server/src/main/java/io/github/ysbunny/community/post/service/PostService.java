@@ -28,7 +28,7 @@ public class PostService {
 
     @Transactional
     public Long createPost(String loginEmail, CreatePostRequest request) {
-        User author = userRepository.findByEmail(loginEmail)
+        User author = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
         Post post = new Post(
@@ -77,7 +77,7 @@ public class PostService {
             @Positive Long postId,
             @Valid UpdatePostRequest request
     ) {
-        User user = userRepository.findByEmail(loginEmail)
+        User user = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
         Post post = postRepository.findById(postId)
@@ -101,7 +101,7 @@ public class PostService {
     @PreAuthorize("hasRole('ADMIN') or" +
             "@postRepository.findById(#postId).get().getAuthor().getEmail() == authentication.name")
     public DeletePostResponse deletePost(String loginEmail, Long postId) {
-        User user = userRepository.findByEmail(loginEmail)
+        User user = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
         Post post = postRepository.findById(postId)

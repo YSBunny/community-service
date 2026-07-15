@@ -33,7 +33,7 @@ public class CommentService {
             Long postId,
             CreateCommentRequest request
     ) {
-        User author = userRepository.findByEmail(loginEmail)
+        User author = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
         Post post = postRepository.findById(postId)
@@ -77,7 +77,7 @@ public class CommentService {
             Long commentId,
             UpdateCommentRequest request
     ) {
-        User user = userRepository.findByEmail(loginEmail)
+        User user = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
         postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("post does not exist"));
@@ -98,7 +98,7 @@ public class CommentService {
     @PreAuthorize("hasRole('ADMIN') or" +
             "@commentRepository.findById(#postId).get().getAuthor().getEmail() == authentication.name")
     public DeleteCommentResponse deleteComment(String loginEmail, Long postId, Long commentId) {
-        User user = userRepository.findByEmail(loginEmail)
+        User user = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
         postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("post does not exist"));

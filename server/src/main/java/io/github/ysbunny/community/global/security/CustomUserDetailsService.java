@@ -20,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username)
+        User user = userRepository.findByEmailAndDeletedAtIsNull(username)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found with email: " + username));
 
         // Spring Security의 UserDetails 객체로 변환

@@ -24,7 +24,7 @@ public class AuthService {
     private final TokenProvider tokenProvider;
 
     public LoginResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("email does not exist"));
 
         // 생성된 토큰을 AuthenticationManager에게 전달

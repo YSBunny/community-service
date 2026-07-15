@@ -5,6 +5,9 @@ import io.github.ysbunny.community.post.domain.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +15,7 @@ import java.util.List;
 
 @Entity @Table(name = "Users")
 @Getter @RequiredArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,8 +36,15 @@ public class User {
     @OneToMany(mappedBy = "author")
     private List<Comment> comments = new ArrayList<>();
 
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     public User(String email, String password, String nickname, String profileImage, Role role) {
@@ -70,5 +81,9 @@ public class User {
 
     public void removeComment(Comment comment) {
         comments.remove(comment);
+    }
+
+    public void delete() {
+        this.deletedAt = LocalDateTime.now();
     }
 }

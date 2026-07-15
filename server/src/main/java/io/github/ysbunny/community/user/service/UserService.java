@@ -40,21 +40,21 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    @PreAuthorize("@userRepository.findById(#id).get().getEmail() == authentication.name")
+    @PreAuthorize("@userRepository.findByIdAndDeletedAtIsNull(#id).get().getEmail() == authentication.name")
     public UserInformationResponse getUser(String loginEmail, Long id) {
-        User user = userRepository.findByEmail(loginEmail)
+        User user = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
         return new UserInformationResponse(user.getEmail(), user.getNickname(), user.getProfileImage());
     }
 
     @Transactional
-    @PreAuthorize("@userRepository.findById(#id).get().getEmail() == authentication.name")
+    @PreAuthorize("@userRepository.findByIdAndDeletedAtIsNull(#id).get().getEmail() == authentication.name")
     public User updateUser(String loginEmail, Long id, UpdateUserRequest request) {
-        User loginUser = userRepository.findByEmail(loginEmail)
+        User loginUser = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
-        User findUser = userRepository.findById(id)
+        User findUser = userRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
         if (!loginUser.getId().equals(findUser.getId())) {
@@ -74,18 +74,18 @@ public class UserService {
     }
 
     @Transactional
-    @PreAuthorize("@userRepository.findById(#id).get().getEmail() == authentication.name")
+    @PreAuthorize("@userRepository.findByIdAndDeletedAtIsNull(#id).get().getEmail() == authentication.name")
     public void deleteUser(String loginEmail, Long id) {
-        User loginUser = userRepository.findByEmail(loginEmail)
+        User loginUser = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
-        User findUser = userRepository.findById(id)
+        User findUser = userRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
         if (!loginUser.getId().equals(findUser.getId())) {
             throw new IllegalArgumentException("unauthorized user");
         }
 
-        userRepository.deleteById(id);
+        findUser.delete();
     }
 }
