@@ -59,7 +59,7 @@ public class PostService {
     }
 
     public PostDetailResponse getPost(Long postId) {
-        Post post = postRepository.findById(postId)
+        Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post not found"));
 
         return new PostDetailResponse(
@@ -71,7 +71,7 @@ public class PostService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN') or" +
-            "@postRepository.findById(#postId).get().getAuthor().getEmail() == authentication.name")
+            "@postRepository.findByIdAndDeletedAtIsNull(#postId).get().getAuthor().getEmail() == authentication.name")
     public UpdatePostResponse updatePost(
             String loginEmail,
             @Positive Long postId,
@@ -80,7 +80,7 @@ public class PostService {
         User user = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
-        Post post = postRepository.findById(postId)
+        Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post does not exist"));
 
         if (user != post.getAuthor()) {
@@ -99,19 +99,19 @@ public class PostService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN') or" +
-            "@postRepository.findById(#postId).get().getAuthor().getEmail() == authentication.name")
+            "@postRepository.findByIdAndDeletedAtIsNull(#postId).get().getAuthor().getEmail() == authentication.name")
     public DeletePostResponse deletePost(String loginEmail, Long postId) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
-        Post post = postRepository.findById(postId)
+        Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post does not exist"));
 
         if (user != post.getAuthor()) {
             throw new IllegalArgumentException("unauthorized user");
         }
 
-        postRepository.deleteById(postId);
+        post.delete();
 
         return new DeletePostResponse("delete_success");
     }

@@ -36,7 +36,7 @@ public class CommentService {
         User author = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
-        Post post = postRepository.findById(postId)
+        Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post does not exist"));
 
         Comment comment = new Comment(
@@ -51,7 +51,7 @@ public class CommentService {
     }
 
     public CommentListResponse getCommentList(Long postId) {
-        Post post = postRepository.findById(postId)
+        Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post does not exist"));
 
         List<Comment> comments = post.getComments();
@@ -80,7 +80,7 @@ public class CommentService {
         User user = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
-        postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("post does not exist"));
+        postRepository.findByIdAndDeletedAtIsNull(postId).orElseThrow(() -> new IllegalArgumentException("post does not exist"));
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("comment does not exist"));
@@ -96,12 +96,12 @@ public class CommentService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN') or" +
-            "@commentRepository.findById(#postId).get().getAuthor().getEmail() == authentication.name")
+            "@commentRepository.findByIdAndDeletedAtIsNull(#postId).get().getAuthor().getEmail() == authentication.name")
     public DeleteCommentResponse deleteComment(String loginEmail, Long postId, Long commentId) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
 
-        postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("post does not exist"));
+        postRepository.findByIdAndDeletedAtIsNull(postId).orElseThrow(() -> new IllegalArgumentException("post does not exist"));
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("comment does not exist"));
