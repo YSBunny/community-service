@@ -70,7 +70,7 @@ public class CommentService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN') or" +
-            "@commentRepository.findById(#postId).get().getAuthor().getEmail() == authentication.name")
+            "@commentRepository.findByIdAndDeletedAtIsNull(#postId).get().getAuthor().getEmail() == authentication.name")
     public UpdateCommentResponse updateComment(
             String loginEmail,
             Long postId,
@@ -82,7 +82,7 @@ public class CommentService {
 
         postRepository.findByIdAndDeletedAtIsNull(postId).orElseThrow(() -> new IllegalArgumentException("post does not exist"));
 
-        Comment comment = commentRepository.findById(commentId)
+        Comment comment = commentRepository.findByIdAndDeletedAtIsNull(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("comment does not exist"));
 
         if (user != comment.getAuthor()) {
@@ -103,14 +103,14 @@ public class CommentService {
 
         postRepository.findByIdAndDeletedAtIsNull(postId).orElseThrow(() -> new IllegalArgumentException("post does not exist"));
 
-        Comment comment = commentRepository.findById(commentId)
+        Comment comment = commentRepository.findByIdAndDeletedAtIsNull(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("comment does not exist"));
 
         if (user != comment.getAuthor()) {
             throw new IllegalArgumentException("unauthorized user");
         }
 
-        commentRepository.deleteById(commentId);
+        comment.delete();
 
         return new DeleteCommentResponse("delete_success");
     }
