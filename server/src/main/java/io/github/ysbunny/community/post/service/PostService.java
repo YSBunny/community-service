@@ -44,7 +44,7 @@ public class PostService {
     }
 
     public PostListResponse getPostList() {
-        List<Post> posts = postRepository.findAll();
+        List<Post> posts = postRepository.findAllByDeletedAtIsNull();
 
         List<PostListItemResponse> postListItemResponses = new ArrayList<>();
 
