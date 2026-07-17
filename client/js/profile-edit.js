@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const profileMenuButton = document.querySelector("#profileMenuButton");
     const profileDropdown = document.querySelector("#profileDropdown");
 
-    const DEFAULT_PROFILE_IMAGE = "./asset/images/profile.png";
+    const DEFAULT_PROFILE_IMAGE = "./assets/images/profile.png";
 
      backButton.addEventListener("click", () => {
         window.location.href = `./posts.html`;
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // 화면의 프로필 프리뷰를 가져와서 user의 프로필 이미지로 띄움
     const profilePreview = document.querySelector("#profilePreview");
-    profilePreview.src = user.profileImage;
+    profilePreview.src = user.profileImage || DEFAULT_PROFILE_IMAGE;
 
     const profileEditForm = document.querySelector("#profileEditForm");
     const profileImage = document.querySelector("#profileImage");
@@ -106,8 +106,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 const result = await updateUser(userId, userData);
                 
-                console.log(result.nickname);
-                console.log(result.profileImage);
+                profileMenuButton.src = result.profileImage || DEFAULT_PROFILE_IMAGE;
+                nicknameInput.value = result.nickname;
+                profilePreview.src = user.profileImage || DEFAULT_PROFILE_IMAGE;
             } catch (error) {
                 alert(error.message);
             }
