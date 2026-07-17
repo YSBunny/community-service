@@ -91,18 +91,18 @@ document.addEventListener("DOMContentLoaded", async function () {
             const meta = document.createElement("div");
             meta.classList.add("post-card__meta");
 
-            const like = document.createElement("span");
-            like.textContent = "좋아요 0";
+            // const like = document.createElement("span");
+            // like.textContent = "좋아요 0";
 
             const comment = document.createElement("span");
-            comment.textContent = "댓글 0";
+            comment.textContent = `댓글수 ${post.commentCount}`;
 
-            const view = document.createElement("span");
-            view.textContent = "조회수 0";
+            // const view = document.createElement("span");
+            // view.textContent = "조회수 0";
 
-            meta.appendChild(like);
+            // meta.appendChild(like);
             meta.appendChild(comment);
-            meta.appendChild(view);
+            // meta.appendChild(view);
 
             titleArea.appendChild(title);
             titleArea.appendChild(meta);

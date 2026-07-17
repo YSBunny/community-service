@@ -61,6 +61,7 @@ public class PostService {
             String postContent = post.getContent();
             String authorNickname = post.getAuthor().getNickname();
             String authorProfileImage = post.getAuthor().getProfileImage();
+            Integer commentCount = post.getComments().size();
             LocalDateTime createdAt = post.getCreatedAt();
 
             PostListItemResponse item = new PostListItemResponse(
@@ -69,6 +70,7 @@ public class PostService {
                     postContent,
                     authorNickname,
                     authorProfileImage,
+                    commentCount,
                     createdAt
             );
             postListItemResponses.add(item);

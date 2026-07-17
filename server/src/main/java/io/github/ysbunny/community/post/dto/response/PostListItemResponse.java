@@ -15,5 +15,7 @@ public class PostListItemResponse {
     private String authorNickname;
     private String authorProfileImage;
 
+    private Integer commentCount;
+
     private LocalDateTime createdAt;
 }
