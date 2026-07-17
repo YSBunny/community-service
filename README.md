@@ -1,5 +1,5 @@
-# KTB4_Selina_Week8
-카카오테크 부트캠프 4기 풀스택 8주차 과제
+# KTB4_Selina_Week9
+카카오테크 부트캠프 4기 풀스택 9주차 과제
 
 ## 프로젝트 구조
 ```
@@ -52,6 +52,7 @@ community-service/
             │   └── service/
             ├── global/
             │   ├── config/
+            │   ├── file/
             │   └── security/
             ├── post/
             │   ├── controller/
