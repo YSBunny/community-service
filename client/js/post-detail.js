@@ -17,6 +17,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     const logoutButton = document.querySelector("#logoutButton");
 
     // 게시글 요소
+    const postAuthorProfileImage = document.querySelector("#postAuthorProfileImage");
+    const postAuthorNickname = document.querySelector("#postAuthorNickname");
+    const postDate = document.querySelector("#postDate");
     const postTitle = document.querySelector("#postTitle");
     const postImage = document.querySelector("#postImage");
     const postContent = document.querySelector("#postContent");
@@ -104,6 +107,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     try {
         const post = await getPost(postId);
 
+        postAuthorProfileImage.src = getProfileImageUrl(post.authorProfileImage);
+        postAuthorProfileImage.alt = `${post.authorNickname}의 프로필 이미지`;
+        postAuthorNickname.textContent = post.authorNickname;
+        postDate.textContent = post.createdAt;
+
         postTitle.textContent = post.title;
         postContent.textContent = post.content;
 
@@ -118,6 +126,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         alert(error.message);
     }
     
+    postAuthorProfileImage.addEventListener("error", () => {
+        postAuthorProfileImage.src = DEFAULT_PROFILE_IMAGE;
+    }, { once: true });
+
     /*
     * 게시글 수정
     */

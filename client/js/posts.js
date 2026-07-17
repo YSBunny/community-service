@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             const date = document.createElement("time");
             date.classList.add("post-card__date");
-            date.textContent = "2021-01-01 00:00:00";
+            date.textContent = post.createdAt;
 
             top.appendChild(titleArea);
             top.appendChild(date);
@@ -118,14 +118,20 @@ document.addEventListener("DOMContentLoaded", async function () {
             const author = document.createElement("div");
             author.classList.add("post-card__author");
 
-            const authorProfile = document.createElement("div");
-            authorProfile.classList.add("author-profile");
+            const authorProfileImage = document.createElement("img");
+            authorProfileImage.classList.add("author-profile");
+            authorProfileImage.src = getProfileImageUrl(post.authorProfileImage);
+            authorProfileImage.alt = `${post.authorNickname}의 프로필 이미지`;
+
+            authorProfileImage.addEventListener("error", () => {
+                authorProfileImage.src = DEFAULT_PROFILE_IMAGE;
+            }, { once: true });
 
             const authorName = document.createElement("span");
             authorName.classList.add("author-name");
-            authorName.textContent = "더미 작성자 1";
+            authorName.textContent = post.authorNickname;
 
-            author.appendChild(authorProfile);
+            author.appendChild(authorProfileImage);
             author.appendChild(authorName);
 
             article.appendChild(content);

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,8 +58,19 @@ public class PostService {
         for (Post post : posts) {
             Long postId = post.getId();
             String postTitle = post.getTitle();
+            String postContent = post.getContent();
+            String authorNickname = post.getAuthor().getNickname();
+            String authorProfileImage = post.getAuthor().getProfileImage();
+            LocalDateTime createdAt = post.getCreatedAt();
 
-            PostListItemResponse item = new PostListItemResponse(postId, postTitle);
+            PostListItemResponse item = new PostListItemResponse(
+                    postId,
+                    postTitle,
+                    postContent,
+                    authorNickname,
+                    authorProfileImage,
+                    createdAt
+            );
             postListItemResponses.add(item);
         }
         return new PostListResponse(postListItemResponses);
@@ -69,9 +81,14 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("post not found"));
 
         return new PostDetailResponse(
+                post.getId(),
                 post.getTitle(),
                 post.getContent(),
-                post.getPostImage()
+                post.getPostImage(),
+                post.getAuthor().getNickname(),
+                post.getAuthor().getProfileImage(),
+                post.getCreatedAt(),
+                post.getUpdatedAt()
         );
     }
 
