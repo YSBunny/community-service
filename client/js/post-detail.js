@@ -299,44 +299,58 @@ document.addEventListener("DOMContentLoaded", async function () {
         const article = document.createElement("article");
 
         article.classList.add("comment-item");
-
         article.dataset.commentId = comment.commentId;
 
         article.innerHTML = `
-        <div class="comment-header">
-            <div class="author-info">
-            <div class="author-profile"></div>
+            <div class="comment-header">
+                <div class="author-info">
+                    <img class="profile-button comment-author-profile-image" />
 
-            <strong class="author-name">
-                더미 작성자 1
-            </strong>
+                    <strong class="author-name comment-author-nickname"></strong>
 
-            <time class="post-date">
-                2021-01-01 00:00:00
-            </time>
+                    <time class="comment-date"></time>
+                </div>
+
+                <div class="comment-actions">
+                    <button
+                        type="button"
+                        class="small-button comment-edit-button"
+                    >
+                        수정
+                    </button>
+
+                    <button
+                        type="button"
+                        class="small-button comment-delete-button"
+                    >
+                        삭제
+                    </button>
+                </div>
             </div>
 
-            <div class="comment-actions">
-            <button
-                type="button"
-                class="small-button comment-edit-button"
-            >
-                수정
-            </button>
-
-            <button
-                type="button"
-                class="small-button comment-delete-button"
-            >
-                삭제
-            </button>
-            </div>
-        </div>
-
-        <p class="comment-content"></p>
+            <p class="comment-content"></p>
         `;
 
+        const commentAuthorProfileImage =
+            article.querySelector(".comment-author-profile-image");
+
+        const commentAuthorNickname = article.querySelector(".comment-author-nickname");
+
+        const commentDate = article.querySelector(".comment-date");
+
         const commentContent = article.querySelector(".comment-content");
+
+        commentAuthorProfileImage.src = getProfileImageUrl(comment.authorProfileImage);
+
+        commentAuthorProfileImage.alt = `${comment.authorNickname}의 프로필 이미지`;
+
+        commentAuthorProfileImage.addEventListener("error", () => {
+                commentAuthorProfileImage.src = DEFAULT_PROFILE_IMAGE;
+            }, { once: true });
+
+        commentAuthorNickname.textContent = comment.authorNickname;
+
+        commentDate.textContent = comment.createdAt;
 
         commentContent.textContent = comment.commentContent;
 

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,8 +62,17 @@ public class CommentService {
         for (Comment comment : comments) {
             Long commentId = comment.getId();
             String commentContent = comment.getComment();
+            String authorNickname = comment.getAuthor().getNickname();
+            String authorProfileImage = comment.getAuthor().getProfileImage();
+            LocalDateTime createdAt = comment.getCreatedAt();
 
-            CommentListItemResponse item = new CommentListItemResponse(commentId, commentContent);
+            CommentListItemResponse item = new CommentListItemResponse(
+                    commentId,
+                    commentContent,
+                    authorNickname,
+                    authorProfileImage,
+                    createdAt
+            );
             commentListItemResponses.add(item);
         }
         return new CommentListResponse(commentListItemResponses);
