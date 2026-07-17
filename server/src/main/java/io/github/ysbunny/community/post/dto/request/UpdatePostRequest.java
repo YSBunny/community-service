@@ -3,6 +3,7 @@ package io.github.ysbunny.community.post.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 public class UpdatePostRequest {
@@ -14,5 +15,5 @@ public class UpdatePostRequest {
     @NotBlank
     private String content;
 
-    private String postImage;
+    private MultipartFile postImage;
 }

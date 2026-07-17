@@ -1,5 +1,6 @@
 package io.github.ysbunny.community.post.service;
 
+import io.github.ysbunny.community.global.file.FileService;
 import io.github.ysbunny.community.post.domain.Post;
 import io.github.ysbunny.community.post.dto.request.CreatePostRequest;
 import io.github.ysbunny.community.post.dto.request.UpdatePostRequest;
@@ -14,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,18 +25,22 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PostService {
+
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final FileService fileService;
 
     @Transactional
     public Long createPost(String loginEmail, CreatePostRequest request) {
         User author = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
+        MultipartFile postImage = request.getPostImage();
+
         Post post = new Post(
                 request.getTitle(),
                 request.getContent(),
-                request.getPostImage(),
+                fileService.saveImage(postImage, "posts"),
                 author
         );
 
@@ -91,7 +97,7 @@ public class PostService {
         post.changeContent(request.getContent());
 
         if (request.getPostImage() != null) {
-            post.changePostImage(request.getPostImage());
+            post.changePostImage(fileService.saveImage(request.getPostImage(), "posts"));
         }
 
         return new UpdatePostResponse("update success");
