@@ -4,8 +4,8 @@ import { request } from "./http.js";
 export function signup(userData) {
     return request("/users", {
         method: "POST",
-        body: JSON.stringify(userData)
-    });
+        body: userData
+    }, false);
 }
 
 // 회원조회
@@ -19,8 +19,8 @@ export function getUser(userId) {
 export function updateUser(userId, userData) {
     return request(`/users/${userId}`, {
         method: "PATCH",
-        body: JSON.stringify(userData)
-    });
+        body: userData
+    }, false);
 }
 
 // 비밀번호 수정

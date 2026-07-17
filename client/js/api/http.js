@@ -3,13 +3,18 @@ const BASE_URL = "http://localhost:8080/api";
 export async function request(url, options = {}) {
   const accessToken = localStorage.getItem("accessToken");
 
+  const isFormData = options.body instanceof FormData;
+
   const headers = {
-    "Content-Type": "application/json",
     ...options.headers
   };
 
   if (accessToken) {
     headers.Authorization = `Bearer ${accessToken}`;
+  }
+
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
   }
 
   const response = await fetch(`${BASE_URL}${url}`, {

@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     profilePreview.src = user.profileImage || DEFAULT_PROFILE_IMAGE;
 
     const profileEditForm = document.querySelector("#profileEditForm");
-    const profileImage = document.querySelector("#profileImage");
+    const profileImageInput = document.querySelector("#profileImage");
     const nicknameHelperText = document.querySelector("#nicknameHelperText");
     const editButton = document.querySelector("#editButton");
 
@@ -93,10 +93,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         // 2. 회원정보 수정 폼 제출 기본 동작 막음
         event.preventDefault();
 
-        const userData = {
-            nickname: nicknameInput.value.trim(),
-            profileImage: profileImage.value
-        }
+        const userData = new FormData();
+
+        userData.append("nickname", nicknameInput.value.trim());
+        userData.append("profileImage", profileImageInput.files[0]);
 
         // 프로필 이미지 값이 바뀌면 프로필 프리뷰도 바뀜 구현
 

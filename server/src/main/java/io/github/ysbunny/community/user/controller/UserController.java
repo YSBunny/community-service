@@ -17,7 +17,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public CreateUserResponse createUser(@Valid @RequestBody CreateUserRequest request) {
+    public CreateUserResponse createUser(@Valid @ModelAttribute CreateUserRequest request) {
         User saved = userService.createUser(request);
         return new CreateUserResponse(saved.getId());
     }
@@ -33,7 +33,7 @@ public class UserController {
     public UpdateUserResponse updateUser(
             Authentication authentication,
             @PathVariable Long userId,
-            @Valid @RequestBody UpdateUserRequest request
+            @Valid @ModelAttribute UpdateUserRequest request
     ) {
         String email = authentication.getName();
 

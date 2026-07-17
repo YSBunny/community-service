@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Validated
@@ -30,13 +31,27 @@ public class UserService {
 
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
-        User user = new User(
-                request.getEmail(),
-                encodedPassword,
-                request.getNickname(),
-                request.getProfileImage(),
-                Role.USER
-        );
+        MultipartFile profileImage = request.getProfileImage();
+        User user;
+
+        if (profileImage != null) {
+            user = new User(
+                    request.getEmail(),
+                    encodedPassword,
+                    request.getNickname(),
+                    profileImage.getOriginalFilename(),
+                    Role.USER
+            );
+        } else {
+            user = new User(
+                    request.getEmail(),
+                    encodedPassword,
+                    request.getNickname(),
+                    null,
+                    Role.USER
+            );
+        }
+
         return userRepository.save(user);
     }
 
@@ -68,7 +83,7 @@ public class UserService {
             findUser.changeNickname(request.getNickname());
         }
         if (request.getProfileImage() != null) {
-            findUser.changeProfileImage(request.getProfileImage());
+            findUser.changeProfileImage(request.getProfileImage().getOriginalFilename());
         }
         return findUser;
     }

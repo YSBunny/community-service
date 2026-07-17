@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @AllArgsConstructor
@@ -22,5 +23,5 @@ public class CreateUserRequest {
     @Size(max = 10)
     private String nickname;
 
-    private String profileImage;
+    private MultipartFile profileImage;
 }

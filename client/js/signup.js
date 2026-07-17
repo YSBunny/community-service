@@ -32,12 +32,16 @@ document.addEventListener("DOMContentLoaded", function () {
     signupForm.addEventListener("submit", async function (event) {
         event.preventDefault();
 
-        // 폼 입력 값 가져와서 userData 객체 생성
-        const userData = {
-            email: emailInput.value.trim(),
-            password: passwordInput.value.trim(),
-            nickname: nicknameInput.value.trim(),
-            profileImage: profileImageInput.value
+        const profileImageFile = profileImageInput.files[0];
+
+        const userData = new FormData();
+        
+        userData.append("email", emailInput.value.trim());
+        userData.append("password", passwordInput.value.trim());
+        userData.append("nickname", nicknameInput.value.trim());
+
+        if (profileImageFile) {
+            userData.append("profileImage", profileImageFile);
         }
 
         console.log("회원가입 요청 데이터:", userData);
@@ -98,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
         profilePreview.src = imageUrl;
         profilePreview.classList.remove("is-hidden");
         profilePlus.classList.add("is-hidden");
-        profileHelperText.textContent = "";
+        // profileHelperText.textContent = "";
     });
 
     emailInput.addEventListener("input", () => {
