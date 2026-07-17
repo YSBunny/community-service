@@ -54,6 +54,8 @@ public class SecurityConfig {
 
                         // H2 콘솔 접근 허용
                         .requestMatchers("/h2-console/**").permitAll()
+                        // 이미지 파일 접근 허용
+                        .requestMatchers("/uploads/**").permitAll()
 
                         .requestMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/posts/**").hasAnyRole("USER", "ADMIN")
