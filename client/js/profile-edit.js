@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const profileMenuButtonImage = document.querySelector("#profileMenuButtonImage");
     const profileDropdown = document.querySelector("#profileDropdown");
 
+    const SERVER_URL = "http://localhost:8080";
     const DEFAULT_PROFILE_IMAGE = "./assets/images/profile.png";
 
      backButton.addEventListener("click", () => {
@@ -17,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     try {
         const user = await getUser(localStorage.getItem("userId"));
 
-        profileMenuButtonImage.src = user.profileImage || DEFAULT_PROFILE_IMAGE;
+        profileMenuButtonImage.src = getProfileImageUrl(user.profileImage);
     } catch (error) {
         console.error(error);
         profileMenuButtonImage.src = DEFAULT_PROFILE_IMAGE;
@@ -82,7 +83,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // 화면의 프로필 프리뷰를 가져와서 user의 프로필 이미지로 띄움
     const profilePreview = document.querySelector("#profilePreview");
-    profilePreview.src = user.profileImage || DEFAULT_PROFILE_IMAGE;
+    profilePreview.src = getProfileImageUrl(user.profileImage);
 
     const profileEditForm = document.querySelector("#profileEditForm");
     const profileImageInput = document.querySelector("#profileImage");
@@ -182,4 +183,12 @@ document.addEventListener("DOMContentLoaded", async function () {
             // window.location.href = `./login.html`;
         });
     });
+
+    function getProfileImageUrl(filename) {
+        if (!filename) {
+            return DEFAULT_PROFILE_IMAGE;
+        }
+
+        return `${SERVER_URL}/uploads/profiles/${encodeURIComponent(filename)}`;
+    }
 });

@@ -7,12 +7,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     const profileMenuButtonImage = document.querySelector("#profileMenuButtonImage");
     const profileDropdown = document.querySelector("#profileDropdown");
 
+    const SERVER_URL = "http://localhost:8080";
     const DEFAULT_PROFILE_IMAGE = "./assets/images/profile.png";
 
     try {
         const user = await getUser(localStorage.getItem("userId"));
 
-        profileMenuButtonImage.src = user.profileImage || DEFAULT_PROFILE_IMAGE;
+        profileMenuButtonImage.src = getProfileImageUrl(user.profileImage);
     } catch (error) {
         console.error(error);
         profileMenuButtonImage.src = DEFAULT_PROFILE_IMAGE;
@@ -156,4 +157,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         checkPasswordEditForm();
     });
+
+    function getProfileImageUrl(filename) {
+        if (!filename) {
+            return DEFAULT_PROFILE_IMAGE;
+        }
+
+        return `${SERVER_URL}/uploads/profiles/${encodeURIComponent(filename)}`;
+    }
 });

@@ -9,12 +9,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const postList = document.querySelector("#postList");
 
+    const SERVER_URL = "http://localhost:8080";
     const DEFAULT_PROFILE_IMAGE = "./assets/images/profile.png";
 
     try {
         const user = await getUser(localStorage.getItem("userId"));
 
-        profileMenuButtonImage.src = user.profileImage || DEFAULT_PROFILE_IMAGE;
+        profileMenuButtonImage.src = getProfileImageUrl(user.profileImage);
     } catch (error) {
         console.error(error);
         profileMenuButtonImage.src = DEFAULT_PROFILE_IMAGE;
@@ -156,4 +157,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         // 3. 게시글 작성 페이지로 넘어감
         window.location.href = `./post-form.html`;
     })
+
+    function getProfileImageUrl(filename) {
+        if (!filename) {
+            return DEFAULT_PROFILE_IMAGE;
+        }
+
+        return `${SERVER_URL}/uploads/profiles/${encodeURIComponent(filename)}`;
+    }
 });
