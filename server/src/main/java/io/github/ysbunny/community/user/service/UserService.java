@@ -1,5 +1,6 @@
 package io.github.ysbunny.community.user.service;
 
+import io.github.ysbunny.community.global.file.FileService;
 import io.github.ysbunny.community.user.domain.Role;
 import io.github.ysbunny.community.user.domain.User;
 import io.github.ysbunny.community.user.dto.request.CreateUserRequest;
@@ -22,6 +23,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FileService fileService;
 
     @Transactional
     public User createUser(CreateUserRequest request) {
@@ -39,7 +41,7 @@ public class UserService {
                     request.getEmail(),
                     encodedPassword,
                     request.getNickname(),
-                    profileImage.getOriginalFilename(),
+                    fileService.saveProfileImage(profileImage),
                     Role.USER
             );
         } else {
