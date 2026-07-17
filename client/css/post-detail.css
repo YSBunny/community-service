@@ -193,6 +193,10 @@
   background-color: #d9d9d9;
 }
 
+.post-image.is-hidden {
+  display: none;
+}
+
 .post-content {
   font-size: 15px;
   font-weight: 400;

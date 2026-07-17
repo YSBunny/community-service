@@ -104,20 +104,20 @@ document.addEventListener("DOMContentLoaded", async function () {
     try {
         const post = await getPost(postId);
 
-        console.log("게시글 상세:", post);
-
         postTitle.textContent = post.title;
         postContent.textContent = post.content;
-        postImage.src = getPostImageUrl(post.postImage);
+
+        if (post.postImage) {
+            postImage.src = getPostImageUrl(post.postImage);
+            postImage.classList.remove("is-hidden");
+        } else {
+            postImage.removeAttribute("src");
+            postImage.classList.add("is-hidden");
+        }
     } catch (error) {
         alert(error.message);
     }
-
-    // 게시글 이미지 로딩 실패 처리
-    postImage.addEventListener("error", () => {
-        postImage.src = DEFAULT_PROFILE_IMAGE;
-    }, { once: true });
-
+    
     /*
     * 게시글 수정
     */
@@ -363,7 +363,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     */
     function getPostImageUrl(filename) {
         if (!filename) {
-            return DEFAULT_PROFILE_IMAGE;
+            return null;
         }
 
         return (`${SERVER_URL}/uploads/posts/` + encodeURIComponent(filename));
