@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const backButton = document.querySelector("#backButton");
 
     const profileMenuButton = document.querySelector("#profileMenuButton");
+    const profileMenuButtonImage = document.querySelector("#profileMenuButtonImage");
     const profileDropdown = document.querySelector("#profileDropdown");
 
     const DEFAULT_PROFILE_IMAGE = "./assets/images/profile.png";
@@ -16,15 +17,15 @@ document.addEventListener("DOMContentLoaded", async function () {
     try {
         const user = await getUser(localStorage.getItem("userId"));
 
-        profileMenuButton.src = user.profileImage || DEFAULT_PROFILE_IMAGE;
+        profileMenuButtonImage.src = user.profileImage || DEFAULT_PROFILE_IMAGE;
     } catch (error) {
         console.error(error);
-        profileMenuButton.src = DEFAULT_PROFILE_IMAGE;
+        profileMenuButtonImage.src = DEFAULT_PROFILE_IMAGE;
     }
 
     // DB에 이미지 주소가 저장되어 있어도 실제 파일이 사라지거나 URL이 잘못될 수 있으므로 프로필 이미지 로딩 실패 처리
     profileMenuButton.addEventListener("error", () => {
-        profileMenuButton.src = DEFAULT_PROFILE_IMAGE;
+        profileMenuButtonImage.src = DEFAULT_PROFILE_IMAGE;
     }, { once: true }); // 기본 이미지까지 로딩되지 않으면 error 이벤트가 반복될 수 있어서 한 번만 실행하도록 함
 
     // 2. 프로필 메뉴 누르면 드롭다운 보이게
