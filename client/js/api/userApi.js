@@ -27,7 +27,7 @@ export function updateUser(userId, userData) {
 export function updatePassword(userId, userData) {
     return request(`/users/${userId}`, {
         method: "PATCH",
-        body: JSON.stringify(userData)
+        body: userData
     });
 }
 

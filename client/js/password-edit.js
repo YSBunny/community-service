@@ -81,10 +81,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         // 2. 비밀번호 수정 폼 제출 기본 동작 막음
         event.preventDefault();
 
+        const userData = new FormData();
+
+        userData.append("password", passwordInput.value.trim());
+
         const userId = localStorage.getItem("userId");
-        const userData = {
-            password: passwordInput.value.trim()
-        };
 
         const passwordConfirm = passwordConfirmInput.value.trim();
 
