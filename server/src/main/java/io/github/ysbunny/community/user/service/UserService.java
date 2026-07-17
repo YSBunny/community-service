@@ -78,6 +78,8 @@ public class UserService {
             throw new IllegalArgumentException("unauthorized user");
         }
 
+        MultipartFile profileImage = request.getProfileImage();
+        
         if (request.getPassword() != null) {
             findUser.changePassword(passwordEncoder.encode(request.getPassword()));
         }
@@ -85,7 +87,7 @@ public class UserService {
             findUser.changeNickname(request.getNickname());
         }
         if (request.getProfileImage() != null) {
-            findUser.changeProfileImage(request.getProfileImage().getOriginalFilename());
+            findUser.changeProfileImage(fileService.saveProfileImage(profileImage));
         }
         return findUser;
     }

@@ -108,9 +108,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 const result = await updateUser(userId, userData);
                 
-                profileMenuButton.src = result.profileImage || DEFAULT_PROFILE_IMAGE;
+                profileMenuButtonImage.src = getProfileImageUrl(result.profileImage);
                 nicknameInput.value = result.nickname;
-                profilePreview.src = user.profileImage || DEFAULT_PROFILE_IMAGE;
+                profilePreview.src = getProfileImageUrl(result.profileImage);
             } catch (error) {
                 alert(error.message);
             }
@@ -124,6 +124,25 @@ document.addEventListener("DOMContentLoaded", async function () {
                 editCompleteToast.classList.add("is-hidden");
             }, 2000);
         }
+    });
+
+    profileImageInput.addEventListener("change", () => {
+        const selectedFile = profileImageInput.files[0];
+
+        if (!selectedFile) {
+            return;
+        }
+
+        if (!selectedFile.type.startsWith("image/")) {
+            profileImageInput.value = "";
+            return;
+        }
+
+        const imageUrl = URL.createObjectURL(selectedFile);
+
+        profilePreview.src = imageUrl;
+
+        editButton.disabled = false;
     });
 
     nicknameInput.addEventListener("input", () => {
