@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const titleInput = document.querySelector("#title");
     const contentInput = document.querySelector("#content");
     const postImageInput = document.querySelector("#postImage");
+    const currentImageName = document.querySelector("#currentImageName");
     const helperText = document.querySelector("#helperText");
 
     const SERVER_URL = "http://localhost:8080";
@@ -100,8 +101,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             titleInput.value = post.title;
             contentInput.value = post.content;
+
             if (post.postImage !== null) {
-                postImageInput.src = getPostImageUrl(post.postImage);    
+                currentImageName.textContent = `현재 이미지: ${post.postImage}`;
+
+                currentImageName.classList.remove("is-hidden");
             }
         } catch (error) {
             console.error(error);
@@ -188,8 +192,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             return;
         }
 
-        const imageUrl = URL.createObjectURL(selectedFile);
+        // currentImageName.textContent = `선택한 이미지: ${selectedFile.name}`;
 
+        currentImageName.classList.remove("is-hidden");
+        
         if (mode === "edit") {
             submitButton.disabled = false;
         }
