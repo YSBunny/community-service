@@ -19,7 +19,7 @@ public class PostController {
     @PostMapping
     public CreatePostResponse createPost(
             Authentication authentication,
-            @Valid @RequestBody CreatePostRequest request
+            @Valid @ModelAttribute CreatePostRequest request
     ) {
         String email = authentication.getName();
 
@@ -42,7 +42,7 @@ public class PostController {
     public UpdatePostResponse updatePost(
             Authentication authentication,
             @PathVariable Long postId,
-            @Valid @RequestBody UpdatePostRequest request
+            @Valid @ModelAttribute UpdatePostRequest request
     ) {
         String email = authentication.getName();
 

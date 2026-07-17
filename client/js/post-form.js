@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const postForm = document.querySelector("#postForm");
     const titleInput = document.querySelector("#title");
     const contentInput = document.querySelector("#content");
-    const postImage = document.querySelector("#postImage");
+    const postImageInput = document.querySelector("#postImage");
     const helperText = document.querySelector("#helperText");
 
     const SERVER_URL = "http://localhost:8080";
@@ -95,11 +95,17 @@ document.addEventListener("DOMContentLoaded", async function () {
         formTitle.textContent = "게시글 수정";
         submitButton.textContent = "수정하기";
 
-        const post = await getPost(postId);
+        try {
+            const post = await getPost(postId);
 
-        titleInput.value = post.title;
-        contentInput.value = post.content;
-        postImage.value = post.postImage;
+            titleInput.value = post.title;
+            contentInput.value = post.content;
+            if (post.postImage !== null) {
+                postImageInput.src = getPostImageUrl(post.postImage);    
+            }
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     // 입력 폼이 포커스 되었었는지
@@ -110,12 +116,17 @@ document.addEventListener("DOMContentLoaded", async function () {
         // 2. 게시글 작성 폼 제출 기본 동작 막음
         event.preventDefault();
 
-        const postData = {
-            title: titleInput.value.trim(),
-            content: contentInput.value.trim(),
-            postImage: postImage.value
-        };
+        const postImageFile = postImageInput.files[0];
 
+        const postData = new FormData();
+
+        postData.append("title", titleInput.value.trim());
+        postData.append("content", contentInput.value.trim());
+        
+        if (postImageFile) {
+            postData.append("postImage", postImageFile);
+        }
+        
         // 4. 제목, 내용 모두 입력되어서 폼 제출 가능
         if (postData.title !== "" && postData.content !== "") {
             if (mode === "edit") {
@@ -170,11 +181,33 @@ document.addEventListener("DOMContentLoaded", async function () {
         checkPostForm()
     });
 
+    postImageInput.addEventListener("change", () => {
+        const selectedFile = postImageInput.files[0];
+
+        if (!selectedFile) {
+            return;
+        }
+
+        const imageUrl = URL.createObjectURL(selectedFile);
+
+        if (mode === "edit") {
+            submitButton.disabled = false;
+        }
+    });
+
     function getProfileImageUrl(filename) {
         if (!filename) {
             return DEFAULT_PROFILE_IMAGE;
         }
 
         return `${SERVER_URL}/uploads/profiles/${encodeURIComponent(filename)}`;
+    }
+
+    function getPostImageUrl(filename) {
+        if (!filename) {
+            return DEFAULT_PROFILE_IMAGE;
+        }
+
+        return `${SERVER_URL}/uploads/posts/${encodeURIComponent(filename)}`;
     }
 });

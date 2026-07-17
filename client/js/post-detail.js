@@ -184,7 +184,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         const image = document.createElement("div");
         image.classList.add("post-image");
         image.ariaLabel = "게시글 이미지 영역";
-
+        image.src = getPostImageUrl(post.postImage);
+        
         const content = document.createElement("p");
         content.classList.add("post-content");
         content.id = "postContent";
@@ -434,5 +435,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
         return `${SERVER_URL}/uploads/profiles/${encodeURIComponent(filename)}`;
+    }
+
+    function getPostImageUrl(filename) {
+        if (!filename) {
+            return DEFAULT_PROFILE_IMAGE;
+        }
+
+        return `${SERVER_URL}/uploads/posts/${encodeURIComponent(filename)}`;
     }
 });

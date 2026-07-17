@@ -4,7 +4,7 @@ import { request } from "./http.js";
 export function createPost(postData) {
     return request("/posts", {
         method: "POST",
-        body: JSON.stringify(postData)
+        body: postData
     });
 }
 
@@ -26,7 +26,7 @@ export function getPost(postId) {
 export function updatePost(postId, postData) {
     return request(`/posts/${postId}`, {
         method: "PATCH",
-        body: JSON.stringify(postData)
+        body: postData
     });
 }
 
