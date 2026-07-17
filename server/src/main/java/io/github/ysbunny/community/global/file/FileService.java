@@ -12,7 +12,7 @@ import java.util.UUID;
 @Service
 public class FileService {
     // 업로드할 파일의 위치를 절대경로로 설정
-    private final Path uploadDirectory = Paths.get("uploads/profiles").toAbsolutePath().normalize();
+    private final Path uploadDirectory = Paths.get("uploads").toAbsolutePath().normalize();
 
     public FileService() {
         // 파일을 저장할 폴더 생성
@@ -23,7 +23,7 @@ public class FileService {
         }
     }
 
-    public String saveProfileImage(MultipartFile file) {
+    public String saveImage(MultipartFile file, String directoryName) {
         if (file == null || file.isEmpty()) {
             return null;
         }
@@ -40,7 +40,7 @@ public class FileService {
             String savedFileName = UUID.randomUUID().toString() + extension;
 
             // 저장할 파일 전체 경로
-            Path targetPath = uploadDirectory.resolve(savedFileName);
+            Path targetPath = uploadDirectory.resolve(directoryName).resolve(savedFileName);
 
             try {
                 // 파일 실제로 저장

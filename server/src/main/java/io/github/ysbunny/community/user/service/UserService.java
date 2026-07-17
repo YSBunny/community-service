@@ -41,7 +41,7 @@ public class UserService {
                     request.getEmail(),
                     encodedPassword,
                     request.getNickname(),
-                    fileService.saveProfileImage(profileImage),
+                    fileService.saveImage(profileImage, "profiles"),
                     Role.USER
             );
         } else {
@@ -79,7 +79,7 @@ public class UserService {
         }
 
         MultipartFile profileImage = request.getProfileImage();
-        
+
         if (request.getPassword() != null) {
             findUser.changePassword(passwordEncoder.encode(request.getPassword()));
         }
@@ -87,7 +87,7 @@ public class UserService {
             findUser.changeNickname(request.getNickname());
         }
         if (request.getProfileImage() != null) {
-            findUser.changeProfileImage(fileService.saveProfileImage(profileImage));
+            findUser.changeProfileImage(fileService.saveImage(profileImage, "profiles"));
         }
         return findUser;
     }
