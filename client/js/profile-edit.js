@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             
             // 다시 모달창 숨기고 로그인 화면으로 돌아감
             withdrawModal.classList.add("is-hidden");
-            // window.location.href = `./login.html`;
+            window.location.href = `./login.html`;
         });
     });
 

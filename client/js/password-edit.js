@@ -1,4 +1,5 @@
 import { getUser, updatePassword } from "./api/userApi.js";
+import { logout } from './api/authApi.js';
 
 document.addEventListener("DOMContentLoaded", async function () {
     const backButton = document.querySelector("#backButton");
