@@ -281,9 +281,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         try {
             await deleteComment(postId, deletingCommentId);
 
+            document.querySelector(
+                    `.comment-item[data-comment-id="${deletingCommentId}"]`
+                )?.remove();
+
             closeModal(deleteCommentModal);
 
-            window.location.reload();
+            deletingCommentId = null;
         } catch (error) {
             alert(error.message);
         }
