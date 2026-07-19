@@ -55,7 +55,7 @@ public class CommentService {
         Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post does not exist"));
 
-        List<Comment> comments = post.getComments();
+        List<Comment> comments = commentRepository.findAllByPostIdAndDeletedAtIsNull(postId);
 
         List<CommentListItemResponse> commentListItemResponses = new ArrayList<>();
 
@@ -80,7 +80,7 @@ public class CommentService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN') or" +
-            "@commentRepository.findByIdAndDeletedAtIsNull(#postId).get().getAuthor().getEmail() == authentication.name")
+            "@commentRepository.findByIdAndDeletedAtIsNull(#commentId).get().getAuthor().getEmail() == authentication.name")
     public UpdateCommentResponse updateComment(
             String loginEmail,
             Long postId,
@@ -106,7 +106,7 @@ public class CommentService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN') or" +
-            "@commentRepository.findByIdAndDeletedAtIsNull(#postId).get().getAuthor().getEmail() == authentication.name")
+            "@commentRepository.findByIdAndDeletedAtIsNull(#commentId).get().getAuthor().getEmail() == authentication.name")
     public DeleteCommentResponse deleteComment(String loginEmail, Long postId, Long commentId) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
