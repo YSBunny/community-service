@@ -16,5 +16,7 @@ public class PostDetailResponse {
     private String authorNickname;
     private String authorProfileImage;
 
+    private Long commentCount;
+
     private LocalDateTime createdAt;
 }

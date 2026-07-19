@@ -1,5 +1,6 @@
 package io.github.ysbunny.community.post.service;
 
+import io.github.ysbunny.community.comment.repository.CommentRepository;
 import io.github.ysbunny.community.global.file.FileService;
 import io.github.ysbunny.community.post.domain.Post;
 import io.github.ysbunny.community.post.dto.request.CreatePostRequest;
@@ -29,6 +30,7 @@ public class PostService {
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
     private final FileService fileService;
 
     @Transactional
@@ -60,7 +62,7 @@ public class PostService {
             String postTitle = post.getTitle();
             String authorNickname = post.getAuthor().getNickname();
             String authorProfileImage = post.getAuthor().getProfileImage();
-            Integer commentCount = post.getComments().size();
+            Long commentCount = commentRepository.countByPostIdAndDeletedAtIsNull(postId);
             LocalDateTime createdAt = post.getCreatedAt();
 
             PostListItemResponse item = new PostListItemResponse(
@@ -87,6 +89,7 @@ public class PostService {
                 post.getPostImage(),
                 post.getAuthor().getNickname(),
                 post.getAuthor().getProfileImage(),
+                commentRepository.countByPostIdAndDeletedAtIsNull(postId),
                 post.getCreatedAt()
         );
     }

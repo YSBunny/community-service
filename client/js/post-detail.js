@@ -115,6 +115,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         postTitle.textContent = post.title;
         postContent.textContent = post.content;
 
+        commentCount.textContent = post.commentCount;
+
         if (post.postImage) {
             postImage.src = getPostImageUrl(post.postImage);
             postImage.classList.remove("is-hidden");
@@ -210,8 +212,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         const result = await getComments(postId);
         const comments = result.comments;
 
-        commentCount.textContent = comments.length;
-
         comments.forEach((comment) => {
             const commentItem = createCommentItem(comment);
 
@@ -288,6 +288,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             closeModal(deleteCommentModal);
 
             deletingCommentId = null;
+            
+            window.location.reload();
         } catch (error) {
             alert(error.message);
         }
