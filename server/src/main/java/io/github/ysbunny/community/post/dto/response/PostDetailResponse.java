@@ -17,5 +17,4 @@ public class PostDetailResponse {
     private String authorProfileImage;
 
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

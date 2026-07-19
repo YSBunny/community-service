@@ -58,7 +58,6 @@ public class PostService {
         for (Post post : posts) {
             Long postId = post.getId();
             String postTitle = post.getTitle();
-            String postContent = post.getContent();
             String authorNickname = post.getAuthor().getNickname();
             String authorProfileImage = post.getAuthor().getProfileImage();
             Integer commentCount = post.getComments().size();
@@ -67,7 +66,6 @@ public class PostService {
             PostListItemResponse item = new PostListItemResponse(
                     postId,
                     postTitle,
-                    postContent,
                     authorNickname,
                     authorProfileImage,
                     commentCount,
@@ -89,8 +87,7 @@ public class PostService {
                 post.getPostImage(),
                 post.getAuthor().getNickname(),
                 post.getAuthor().getProfileImage(),
-                post.getCreatedAt(),
-                post.getUpdatedAt()
+                post.getCreatedAt()
         );
     }
 

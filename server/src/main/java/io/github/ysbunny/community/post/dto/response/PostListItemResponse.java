@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 public class PostListItemResponse {
     private Long postId;
     private String title;
-    private String content;
 
     private String authorNickname;
     private String authorProfileImage;
