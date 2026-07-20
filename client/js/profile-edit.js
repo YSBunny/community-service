@@ -97,9 +97,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         const userData = new FormData();
 
         userData.append("nickname", nicknameInput.value.trim());
-        userData.append("profileImage", profileImageInput.files[0]);
 
-        // 프로필 이미지 값이 바뀌면 프로필 프리뷰도 바뀜 구현
+        if (profileImageInput.files[0]) {
+            userData.append("profileImage", profileImageInput.files[0]);
+        }
 
         // 3. 닉네임 입력됐으면 회원정보 수정 가능
         if (!(userData.nickname === "")) {
@@ -116,7 +117,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 setTimeout(() => {
                     editCompleteToast.classList.add("is-hidden");
                 }, 2000);
-                
+
                 profileMenuButtonImage.src = getProfileImageUrl(result.profileImage);
                 nicknameInput.value = result.nickname;
                 profilePreview.src = getProfileImageUrl(result.profileImage);
