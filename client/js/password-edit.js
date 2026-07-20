@@ -95,18 +95,18 @@ document.addEventListener("DOMContentLoaded", async function () {
                 const result = await updatePassword(userId, userData);
 
                 console.log(result);
+
+                // 4. 수정완료 토스트 메시지 2초간 띄움
+                const passwordEditToast = document.querySelector("#passwordEditToast");
+
+                passwordEditToast.classList.remove("is-hidden");
+
+                setTimeout(() => {
+                    passwordEditToast.classList.add("is-hidden");
+            }, 2000);
             } catch (error) {
                 alert(error.message);
             }
-
-            // 4. 수정완료 토스트 메시지 2초간 띄움
-            const passwordEditToast = document.querySelector("#passwordEditToast");
-
-            passwordEditToast.classList.remove("is-hidden");
-
-            setTimeout(() => {
-                passwordEditToast.classList.add("is-hidden");
-            }, 2000);
         }
     });
 

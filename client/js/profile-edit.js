@@ -107,6 +107,15 @@ document.addEventListener("DOMContentLoaded", async function () {
                 console.log("회원정보 수정 요청 데이터:", userData);
 
                 const result = await updateUser(userId, userData);
+
+                // 4. 수정완료 토스트 메시지 2초간 띄움
+                const editCompleteToast = document.querySelector("#editCompleteToast");
+
+                editCompleteToast.classList.remove("is-hidden");
+
+                setTimeout(() => {
+                    editCompleteToast.classList.add("is-hidden");
+                }, 2000);
                 
                 profileMenuButtonImage.src = getProfileImageUrl(result.profileImage);
                 nicknameInput.value = result.nickname;
@@ -114,15 +123,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             } catch (error) {
                 alert(error.message);
             }
-
-            // 4. 수정완료 토스트 메시지 2초간 띄움
-            const editCompleteToast = document.querySelector("#editCompleteToast");
-
-            editCompleteToast.classList.remove("is-hidden");
-
-            setTimeout(() => {
-                editCompleteToast.classList.add("is-hidden");
-            }, 2000);
         }
     });
 
