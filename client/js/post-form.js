@@ -143,8 +143,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             } else {
                 const result = await createPost(postData);
 
-                localStorage.setItem("postId", result.postId);
-                const postId = localStorage.getItem("postId");
+                const postId = result.postId;
 
                 console.log(result);
 
