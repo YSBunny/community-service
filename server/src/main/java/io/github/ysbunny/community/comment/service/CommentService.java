@@ -10,7 +10,6 @@ import io.github.ysbunny.community.comment.repository.CommentRepository;
 import io.github.ysbunny.community.post.repository.PostRepository;
 import io.github.ysbunny.community.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -52,7 +51,7 @@ public class CommentService {
     }
 
     public CommentListResponse getCommentList(Long postId) {
-        Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
+        postRepository.findByIdAndDeletedAtIsNull(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post does not exist"));
 
         List<Comment> comments = commentRepository.findAllByPostIdAndDeletedAtIsNull(postId);
@@ -79,8 +78,6 @@ public class CommentService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or" +
-            "@commentRepository.findByIdAndDeletedAtIsNull(#commentId).get().getAuthor().getEmail() == authentication.name")
     public UpdateCommentResponse updateComment(
             String loginEmail,
             Long postId,
@@ -105,8 +102,6 @@ public class CommentService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or" +
-            "@commentRepository.findByIdAndDeletedAtIsNull(#commentId).get().getAuthor().getEmail() == authentication.name")
     public DeleteCommentResponse deleteComment(String loginEmail, Long postId, Long commentId) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));

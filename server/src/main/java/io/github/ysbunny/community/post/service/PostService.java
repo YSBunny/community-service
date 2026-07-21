@@ -12,7 +12,6 @@ import io.github.ysbunny.community.user.repository.UserRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -95,8 +94,6 @@ public class PostService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or" +
-            "@postRepository.findByIdAndDeletedAtIsNull(#postId).get().getAuthor().getEmail() == authentication.name")
     public UpdatePostResponse updatePost(
             String loginEmail,
             @Positive Long postId,
@@ -123,8 +120,6 @@ public class PostService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or" +
-            "@postRepository.findByIdAndDeletedAtIsNull(#postId).get().getAuthor().getEmail() == authentication.name")
     public DeletePostResponse deletePost(String loginEmail, Long postId) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("unauthenticated user"));
