@@ -56,9 +56,9 @@ public class TokenProvider {
             // 토큰 검증
             parseClaims(token);
             return true;
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtException e) {   // 만료된 토큰
             return false;
-        } catch (JwtException | IllegalArgumentException e) {
+        } catch (JwtException | IllegalArgumentException e) {   // 위조되거나 잘못된 토큰
             return false;
         }
     }

@@ -31,9 +31,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 3. 토큰이 유효하면 Authentication 객체를 가져와서 SecurityContext에 저장
             Authentication authentication = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
+        } else if (token != null && !tokenProvider.validateToken(token)) {
+            // 3. 토큰이 유효하지 않으면 401 반환
+            SecurityContextHolder.clearContext();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
 
-        // 4. 다음 필터로 진행
+        // 4. 토큰이 없거나 유효한 경우 다음 필터로 진행
         filterChain.doFilter(request, response);
     }
 

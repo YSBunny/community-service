@@ -1,6 +1,7 @@
 package io.github.ysbunny.community.global.config;
 
 import io.github.ysbunny.community.global.security.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,12 +47,31 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                // 인증에 실패하면 401, 권한 부족이면 403
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((
+                                request,
+                                response,
+                                authException
+                        ) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        })
+                        .accessDeniedHandler((
+                                request,
+                                response,
+                                accessDeniedException
+                        ) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        })
+                )
                 // 5. 권한 설정
                 .authorizeHttpRequests(auth -> auth
                         // 회원가입과 로그인은 모두에게 접근 허용
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
 
+                        // 에러 허용
+                        .requestMatchers("/error").permitAll()
                         // H2 콘솔 접근 허용
                         .requestMatchers("/h2-console/**").permitAll()
                         // 이미지 파일 접근 허용

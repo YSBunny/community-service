@@ -32,9 +32,16 @@ export async function request(url, options = {}) {
 
     throw new Error(errorText || "API 요청에 실패했습니다.");
   }
+  
+  const isLoginRequest = url.includes("/api/auth/login");
 
   if (response.status === 204) {
     return null;
+  }
+  // 토큰에 문제가 있을 때(로그인, 회원가입 요청이 아닌데 401을 반환받았을 때)
+  else if (response.status === 401 && !isLoginRequest) {
+    localStorage.removeItem("accessToken");
+    window.location.replace("/login.html");
   }
 
   return await response.json();
