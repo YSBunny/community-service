@@ -86,6 +86,7 @@ public class PostService {
                 post.getTitle(),
                 post.getContent(),
                 post.getPostImage(),
+                post.getAuthor().getId(),
                 post.getAuthor().getNickname(),
                 post.getAuthor().getProfileImage(),
                 commentRepository.countByPostIdAndDeletedAtIsNull(postId),

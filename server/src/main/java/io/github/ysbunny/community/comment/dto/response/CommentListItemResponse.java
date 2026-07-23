@@ -11,6 +11,7 @@ public class CommentListItemResponse {
     private Long commentId;
     private String commentContent;
 
+    private Long authorId;
     private String authorNickname;
     private String authorProfileImage;
 

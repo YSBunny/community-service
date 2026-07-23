@@ -13,6 +13,7 @@ public class PostDetailResponse {
     private String content;
     private String postImage;
 
+    private Long authorId;
     private String authorNickname;
     private String authorProfileImage;
 

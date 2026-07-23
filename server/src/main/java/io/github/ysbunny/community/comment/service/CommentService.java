@@ -61,6 +61,7 @@ public class CommentService {
         for (Comment comment : comments) {
             Long commentId = comment.getId();
             String commentContent = comment.getComment();
+            Long authorId = comment.getAuthor().getId();
             String authorNickname = comment.getAuthor().getNickname();
             String authorProfileImage = comment.getAuthor().getProfileImage();
             LocalDateTime createdAt = comment.getCreatedAt();
@@ -68,6 +69,7 @@ public class CommentService {
             CommentListItemResponse item = new CommentListItemResponse(
                     commentId,
                     commentContent,
+                    authorId,
                     authorNickname,
                     authorProfileImage,
                     createdAt

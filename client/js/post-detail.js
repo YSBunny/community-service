@@ -47,6 +47,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     const params = new URLSearchParams(window.location.search);
     const postId = params.get("postId");
 
+    // 현재 로그인한 유저 아이디 가져오기
+    const loginUserId = localStorage.getItem("userId");
+
     // 현재 삭제 대상으로 선택된 댓글 id
     let deletingCommentId = null;
 
@@ -114,6 +117,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         postTitle.textContent = post.title;
         postContent.textContent = post.content;
+
+        const postActions = document.querySelector("#postActions");
+
+        const isPostAuthor = Number(loginUserId) === Number(post.authorId);
+
+        if (isPostAuthor) {
+            postActions.classList.remove("is-hidden");
+        } else {
+            postActions.classList.add("is-hidden");
+        }
 
         commentCount.textContent = post.commentCount;
 
@@ -306,6 +319,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         article.classList.add("comment-item");
         article.dataset.commentId = comment.commentId;
+        article.dataset.authorId = comment.authorId;
 
         article.innerHTML = `
             <div class="comment-header">
@@ -317,7 +331,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     <time class="comment-date"></time>
                 </div>
 
-                <div class="comment-actions">
+                <div class="comment-actions is-hidden">
                     <button
                         type="button"
                         class="small-button comment-edit-button"
@@ -344,6 +358,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         const commentDate = article.querySelector(".comment-date");
 
+        const commentActions = article.querySelector(".comment-actions");
+
         const commentContent = article.querySelector(".comment-content");
 
         commentAuthorProfileImage.src = getProfileImageUrl(comment.authorProfileImage);
@@ -358,6 +374,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         commentDate.textContent = comment.createdAt;
 
+        if (Number(loginUserId) === Number(comment.authorId)) {
+            commentActions.classList.remove("is-hidden");
+        }
         commentContent.textContent = comment.commentContent;
 
         return article;
