@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import ProfileMenu from "./ProfileMenu";
 
 function Header({
