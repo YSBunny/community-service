@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 
 import Header from "../components/Header.jsx";
 import "../styles/login.css";
@@ -8,8 +8,6 @@ import "../styles/login.css";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function LoginPage() {
-  const navigate = useNavigate();
-
   // 폼 상태
   const [form, setForm] = useState({
     email: "",
@@ -90,7 +88,7 @@ function LoginPage() {
     <>
       <Header />
       
-      <main className="main">
+      <main className="main login-main">
         <section className="login-section">
           <h2 className="page-title">로그인</h2>
           <p className="auth-description">최애 이야기가 시작되는 팬 라운지에 입장하세요.</p>
