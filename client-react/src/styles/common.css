@@ -61,10 +61,11 @@ body::before {
   position: sticky;
   top: 0;
   z-index: 50;
+  width: 100%;
   height: 72px;
-  border-bottom: 1px solid rgba(233, 227, 244, 0.85);
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(18px);
+  border-bottom: none;
+  background: transparent;
+  backdrop-filter: none;
 }
 
 .header__inner {
@@ -79,9 +80,14 @@ body::before {
 
 .header__title {
   position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  white-space: nowrap;
+
   color: var(--ink);
   font-size: 25px;
   font-weight: 900;
+  line-height: 1;
   letter-spacing: -1.2px;
 }
 

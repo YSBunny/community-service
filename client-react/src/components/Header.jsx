@@ -22,7 +22,9 @@ function Header({
             className="back-button"
             onClick={handleBack}
             aria-label="뒤로 가기"
-          >‹</button>
+          >
+            ‹
+          </button>
         )}
 
         <Link to="/posts" className="header__title">
