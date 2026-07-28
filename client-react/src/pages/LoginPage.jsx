@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 
 import Header from "../components/Header.jsx";
-import "../styles/login.css";
+import "../styles/LoginPage.css";
 
 // 이메일 검증 규칙
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
