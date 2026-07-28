@@ -93,15 +93,36 @@
   width: 100%;
 }
 
-.signup-section > .login-link {
-  width: 100%;
-  margin-top: 12px;
-  color: var(--primary);
-  background: transparent;
+.login-guide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 14px;
 }
 
-.signup-section > .login-link:hover {
+.login-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 12px;
+  border-radius: 10px;
+  color: var(--primary);
   background: var(--primary-pale);
+  font-weight: 800;
+  text-decoration: none;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.login-link:hover {
+  color: #fff;
+  background: var(--primary);
+  transform: translateY(-1px);
 }
 
 @media (max-width: 600px) {
