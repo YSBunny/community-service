@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { signup } from "../api/userApi";
 
 import Header from "../components/Header";
 import "../styles/SignupPage.css";
@@ -11,6 +12,8 @@ const PASSWORD_PATTERN =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?])[A-Za-z\d!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]{8,20}$/;
 
 function Signup() {
+  const navigate = useNavigate();
+
   // 폼 상태
   const [form, setForm] = useState({
     email: "",
@@ -117,7 +120,7 @@ function Signup() {
   }
 
   // 폼 제출
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
     // input을 거치지 않고 제출 시도 시
@@ -133,6 +136,7 @@ function Signup() {
       return;
     }
 
+    // 회원가입 요청 데이터
     const signupRequest = {
       email: form.email.trim(),
       password: form.password,
@@ -140,7 +144,19 @@ function Signup() {
       profileImage
     }
 
-    console.log(signupRequest);
+    try {
+      // 회원가입 API 호출
+      const responseData = await signup(signupRequest);
+
+      console.log("회원가입 성공:", responseData);
+
+      // 로그인 페이지로 이동
+      navigate("/login", {
+        replace: true
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   // 프로필 이미지 미리보기
