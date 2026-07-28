@@ -25,7 +25,7 @@ function LoginPage() {
   let passwordHelperText = "";
 
   // 두 필드 모두 입력됐는지
-  const isFormFilled = form.email.trim() !== "" && form.password.trim() !== "";
+  const isFormFilled = form.email.trim() !== "" && form.password !== "";
 
   // 이메일에 포커싱됐었을 때
   if (touched.email) {
@@ -37,7 +37,7 @@ function LoginPage() {
   }
 
   // 비밀번호에 포커싱됐었을 때
-  if (touched.password && form.password.trim() === "") {
+  if (touched.password && form.password === "") {
     passwordHelperText = "* 비밀번호를 입력해주세요.";
   }
   
