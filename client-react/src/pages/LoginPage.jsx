@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { login } from "../api/authApi.js";
 
 import Header from "../components/Header.jsx";
 import "../styles/LoginPage.css";
@@ -8,6 +9,8 @@ import "../styles/LoginPage.css";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function LoginPage() {
+  const navigate = useNavigate();
+
   // 폼 상태
   const [form, setForm] = useState({
     email: "",
@@ -62,7 +65,7 @@ function LoginPage() {
   }
 
   // 폼 제출
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
     // input을 거치지 않고 제출 시도 시
@@ -76,12 +79,28 @@ function LoginPage() {
       return;
     }
 
+    // 로그인 요청 데이터
     const loginRequest = {
       email: form.email.trim(),
       password: form.password.trim()
     };
 
-    console.log(loginRequest);
+    try {
+      // 로그인 API 호출
+      const responseData = await login(loginRequest);
+
+      console.log("로그인 성공:", responseData);
+
+      localStorage.setItem("userId", responseData.userId);
+      localStorage.setItem("accessToken", responseData.token);
+
+      // 게시글 목록 페이지로 이동
+      navigate("/posts", {
+        replace: true
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
