@@ -131,9 +131,12 @@ function LoginPage() {
             </button>
           </form>
 
-          <Link to="/signup" className="signup-link">
-            회원가입
-          </Link>
+          <p className="signup-guide">
+            아직 계정이 없으신가요?{" "}
+            <Link to="/signup" className="signup-link">
+              회원가입
+            </Link>
+          </p>
         </section>
       </main>
     </>
