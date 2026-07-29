@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router";
 
 import LoginPage from "./pages/LoginPage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
+import PostListPage from "./pages/PostListPage.jsx"
 
 import "./App.css";
 
@@ -22,6 +23,11 @@ function App() {
         <Route
           path="/signup"
           element={<SignupPage />}
+        />
+
+        <Route
+          path="/posts"
+          element={<PostListPage />}
         />
       </Routes>
     </div>
