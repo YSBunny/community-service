@@ -1,0 +1,183 @@
+.main {
+  width: min(100% - 32px, 920px);
+}
+
+.intro-section {
+  position: relative;
+  overflow: hidden;
+  padding: 34px 36px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #2b2144 0%, #5b3ec2 58%, #8c68ff 100%);
+  color: #fff;
+  box-shadow: var(--shadow);
+}
+
+.intro-section::before {
+  content: "NYAREUREUK FAN COMMUNITY";
+  display: block;
+  margin-bottom: 12px;
+  color: #dcd3ff;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2.4px;
+}
+
+.intro-section::after {
+  content: "✦  ♡  ✦";
+  position: absolute;
+  top: 28px;
+  right: 34px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 22px;
+  letter-spacing: 8px;
+}
+
+.intro-section p {
+  font-size: 25px;
+  font-weight: 650;
+  line-height: 1.45;
+  letter-spacing: -0.8px;
+}
+
+.intro-section strong {
+  color: #ffc3df;
+}
+
+.board-section {
+  margin-top: 28px;
+}
+
+.board-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.board-toolbar::before {
+  content: "지금 팬들이 나누는 이야기";
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.write-button {
+  width: 136px;
+}
+
+.post-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.post-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 190px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  transition: 0.22s;
+}
+
+.post-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(var(--primary), var(--accent));
+}
+
+.post-card:hover {
+  transform: translateY(-5px);
+  border-color: #d9cff8;
+  box-shadow: var(--shadow);
+}
+
+.post-card__content {
+  padding: 24px 22px 18px 26px;
+}
+
+.post-card__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.post-card__title {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 19px;
+  line-height: 1.4;
+  letter-spacing: -0.5px;
+}
+
+.post-card__meta {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.post-card__meta span {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: var(--primary-pale);
+}
+
+.post-card__date {
+  flex: none;
+  color: #9a91aa;
+  font-size: 10px;
+}
+
+.post-card__author {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 14px 22px 16px 26px;
+  border-top: 1px solid #f0ecf7;
+  background: #fdfcff;
+}
+
+.post-card__author .author-profile {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  box-shadow: inset 0 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+.post-card__author .author-name {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+@media (max-width: 700px) {
+  .post-list {
+    grid-template-columns: 1fr;
+  }
+
+  .intro-section {
+    padding: 28px 24px;
+  }
+
+  .intro-section p {
+    font-size: 21px;
+  }
+
+  .board-toolbar::before {
+    font-size: 14px;
+  }
+
+  .write-button {
+    width: 120px;
+  }
+}
