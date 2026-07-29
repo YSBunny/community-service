@@ -29,6 +29,7 @@ export async function request(url, options = {}) {
   }
   // 토큰에 문제가 있을 때(로그인, 회원가입 요청이 아닌데 401을 반환받았을 때)
   else if (response.status === 401 && !isLoginRequest) {
+    localStorage.removeItem("userId");
     localStorage.removeItem("accessToken");
     window.location.replace("/login");
   }
