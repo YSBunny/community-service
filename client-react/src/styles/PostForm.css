@@ -1,0 +1,177 @@
+.post-form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 23px;
+  width: 100%;
+  padding: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: var(--shadow);
+}
+
+.post-form::before {
+  content: "FAN POST";
+  position: absolute;
+  top: 22px;
+  right: 28px;
+  color: #b7aadf;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+/* 제목 입력창 */
+.post-form .title-input {
+  font-size: 18px;
+  font-weight: 750;
+}
+
+/* 내용 입력창 */
+.post-form .content-textarea {
+  min-height: 300px;
+  padding: 17px;
+  border-radius: 15px;
+  line-height: 1.75;
+  resize: vertical;
+}
+
+/* 오류가 있는 입력창 */
+.post-form .title-input[aria-invalid="true"],
+.post-form .content-textarea[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.post-form .title-input[aria-invalid="true"]:focus,
+.post-form .content-textarea[aria-invalid="true"]:focus {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 4px rgba(230, 79, 103, 0.1);
+}
+
+/* 파일 선택 영역 */
+.file-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  padding: 12px 14px;
+  border: 1px dashed #cfc4ef;
+  border-radius: 14px;
+  background: var(--primary-pale);
+}
+
+/*
+ * 실제 파일 input은 화면에서 숨기지만,
+ * label을 통해 선택할 수 있도록 DOM에는 유지합니다.
+ */
+.file-input {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+/* 커스텀 파일 선택 버튼 */
+.file-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 9px 14px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.file-button:hover {
+  border-color: rgba(123, 92, 255, 0.25);
+  background: #e5deff;
+  color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+/* 키보드로 파일 input에 접근했을 때 */
+.file-input:focus-visible + .file-name {
+  color: var(--primary);
+}
+
+/* 선택한 파일명 또는 기존 이미지명 */
+.file-name {
+  overflow: hidden;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* API 요청 실패 메시지 */
+.post-form .submit-error {
+  margin: -4px 0;
+  color: var(--danger);
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* 완료 버튼 */
+.post-form .submit-button {
+  align-self: flex-end;
+  width: 150px;
+}
+
+/* 제출 중이거나 입력값이 부족한 경우 */
+.post-form .submit-button:disabled {
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .post-form {
+    gap: 20px;
+    padding: 30px 22px;
+  }
+
+  .post-form::before {
+    top: 18px;
+    right: 20px;
+  }
+
+  .post-form .content-textarea {
+    min-height: 240px;
+  }
+
+  .file-row {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .file-button {
+    width: 100%;
+  }
+
+  .file-name {
+    text-align: center;
+  }
+
+  .post-form .submit-button {
+    width: 100%;
+  }
+}
