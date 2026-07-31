@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
-import { getPosts, updatePost } from "../api/postApi.js";
+import { getPost, updatePost } from "../api/postApi.js";
 import Header from "../components/Header.jsx";
 import PostForm from "../components/PostForm.jsx";
 import "../styles/PostFormPage.css";
@@ -31,7 +31,7 @@ function PostEditPage() {
         setIsLoading(true);
         setLoadError("");
 
-        const responseData = await getPosts(postId, {
+        const responseData = await getPost(postId, {
             signal: controller.signal
           });
 
