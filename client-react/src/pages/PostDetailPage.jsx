@@ -59,7 +59,10 @@ function PostDetailPage() {
     }
 
     loadPage();
-    return () => { isCancelled = true; };
+
+    return () => {
+      isCancelled = true;
+    };
   }, [postId]);
 
   async function reloadComments() {
@@ -86,20 +89,25 @@ function PostDetailPage() {
 
   async function handleCommentSubmit(event) {
     event.preventDefault();
+
     const content = commentText.trim();
 
     if (!content || isCommentSubmitting) {
       return;
     }
 
+    const commentData = {
+      comment: content
+    };
+
     try {
       setIsCommentSubmitting(true);
       setActionError("");
 
-      if (editingCommentId) {
-        await updateComment(postId, editingCommentId, content);
+      if (editingCommentId !== null) {
+        await updateComment(postId, editingCommentId, commentData);
       } else {
-        await createComment(postId, content);
+        await createComment(postId, commentData);
       }
 
       await reloadComments();
@@ -139,11 +147,25 @@ function PostDetailPage() {
   }
 
   if (isLoading) {
-    return <><Header showBackButton /><main className="main"><p className="page-status">게시글을 불러오는 중입니다...</p></main></>;
+    return (
+      <>
+        <Header showBackButton />
+        <main className="main">
+          <p className="page-status">게시글을 불러오는 중입니다...</p>
+        </main>
+      </>
+    );
   }
 
   if (loadError || !post) {
-    return <><Header showBackButton /><main className="main"><p className="page-error">{loadError}</p></main></>;
+    return (
+      <>
+        <Header showBackButton />
+        <main className="main">
+          <p className="page-error">{loadError}</p>
+        </main>
+      </>
+    );
   }
 
   const postAuthorId = post.authorId || post.userId;
@@ -158,11 +180,19 @@ function PostDetailPage() {
           <header className="post-detail__header">
             <div className="post-detail__heading">
               <h1 className="post-detail__title">{post.title}</h1>
+
               {isMyPost && (
                 <div className="post-detail__actions">
-                  <Link to={`/posts/${postId}/edit`} className="post-action-button">수정</Link>
-                  <button type="button" className="post-action-button post-action-button--danger"
-                    onClick={() => setDeleteTarget({ type: "post", id: postId })}>
+                  <Link to={`/posts/${postId}/edit`} className="post-action-button">
+                    수정
+                  </Link>
+                  <button
+                    type="button"
+                    className="post-action-button post-action-button--danger"
+                    onClick={() =>
+                      setDeleteTarget({ type: "post", id: postId })
+                    }
+                  >
                     삭제
                   </button>
                 </div>
@@ -170,9 +200,12 @@ function PostDetailPage() {
             </div>
 
             <div className="post-detail__author">
-              <img src={getProfileImageUrl(post.authorProfileImage)}
-                alt={`${post.authorNickname}의 프로필`} className="author-profile"
-                onError={useDefaultProfileImage} />
+              <img
+                src={getProfileImageUrl(post.authorProfileImage)}
+                alt={`${post.authorNickname}의 프로필`}
+                className="author-profile"
+                onError={useDefaultProfileImage}
+              />
               <span className="author-name">{post.authorNickname}</span>
               <time className="post-detail__date" dateTime={post.createdAt}>
                 {formatDate(post.createdAt)}
@@ -182,8 +215,14 @@ function PostDetailPage() {
 
           <div className="post-detail__body">
             {post.postImage && (
-              <img src={getPostImageUrl(post.postImage)} alt={`${post.title} 첨부`}
-                className="post-detail__image" onError={(event) => { event.currentTarget.hidden = true; }} />
+              <img
+                src={getPostImageUrl(post.postImage)}
+                alt={`${post.title} 첨부`}
+                className="post-detail__image"
+                onError={(event) => {
+                  event.currentTarget.hidden = true;
+                }}
+              />
             )}
             <p className="post-detail__content">{post.content}</p>
           </div>
@@ -191,26 +230,45 @@ function PostDetailPage() {
 
         <section className="comment-section">
           <div className="comment-section__heading">
-            <h2>댓글</h2><span>{comments.length}</span>
+            <h2>댓글</h2>
+            <span>{comments.length}</span>
           </div>
 
           <form className="comment-form" onSubmit={handleCommentSubmit}>
-            <textarea placeholder="댓글을 입력하세요" value={commentText}
-              onChange={(event) => setCommentText(event.target.value)} />
+            <textarea
+              placeholder="댓글을 입력하세요"
+              value={commentText}
+              onChange={(event) => setCommentText(event.target.value)}
+            />
             <div className="comment-form__actions">
-              {editingCommentId && (
-                <button type="button" className="comment-cancel-button" onClick={cancelCommentEdit}>
+              {editingCommentId !== null && (
+                <button
+                  type="button"
+                  className="comment-cancel-button"
+                  onClick={cancelCommentEdit}
+                >
                   수정 취소
                 </button>
               )}
-              <button type="submit" className="comment-submit-button"
-                disabled={!commentText.trim() || isCommentSubmitting}>
-                {isCommentSubmitting ? "처리 중..." : editingCommentId ? "댓글 수정" : "댓글 등록"}
+              <button
+                type="submit"
+                className="comment-submit-button"
+                disabled={!commentText.trim() || isCommentSubmitting}
+              >
+                {isCommentSubmitting
+                  ? "처리 중..."
+                  : editingCommentId !== null
+                    ? "댓글 수정"
+                    : "댓글 등록"}
               </button>
             </div>
           </form>
 
-          {actionError && <p className="action-error" role="alert">{actionError}</p>}
+          {actionError && (
+            <p className="action-error" role="alert">
+              {actionError}
+            </p>
+          )}
 
           {comments.length === 0 ? (
             <p className="comment-empty">아직 작성된 댓글이 없습니다.</p>
@@ -222,7 +280,9 @@ function PostDetailPage() {
                   comment={comment}
                   currentUserId={currentUserId}
                   onEdit={startCommentEdit}
-                  onDelete={(commentId) => setDeleteTarget({ type: "comment", id: commentId })}
+                  onDelete={(commentId) =>
+                    setDeleteTarget({ type: "comment", id: commentId })
+                  }
                 />
               ))}
             </ul>
@@ -232,7 +292,11 @@ function PostDetailPage() {
 
       <ConfirmModal
         isOpen={deleteTarget !== null}
-        title={deleteTarget?.type === "post" ? "게시글을 삭제할까요?" : "댓글을 삭제할까요?"}
+        title={
+          deleteTarget?.type === "post"
+            ? "게시글을 삭제할까요?"
+            : "댓글을 삭제할까요?"
+        }
         message="삭제된 내용은 복구할 수 없습니다."
         confirmText="삭제"
         isProcessing={isDeleting}
