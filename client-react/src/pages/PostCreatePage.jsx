@@ -8,45 +8,36 @@ import "../styles/PostFormPage.css";
 
 function PostCreatePage() {
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   async function handleCreate(postData) {
     try {
-      const responseData = await createPost(postData);
+      setIsSubmitting(true);
+      setSubmitError("");
 
-      const createdPostId = responseData?.postId;
+      const response = await createPost(postData);
+      const postId = response?.postId || response?.post?.postId;
 
-      if (createdPostId) {
-        navigate(`/posts/${createdPostId}`,
-          { replace: true }
-        );
-
-        return;
-      }
-
-      navigate("/posts", {
-        replace: true
-      });
+      navigate(postId ? `/posts/${postId}` : "/posts", { replace: true });
     } catch (error) {
-      console.log("게시글 작성 실패:", error);
+      setSubmitError(error.message || "게시글 작성에 실패했습니다.");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   return (
     <>
       <Header showBackButton />
-
       <main className="main post-form-main">
         <section className="post-form-section">
-          <h1 className="page-title">
-            게시글 작성
-          </h1>
-
-          <p className="page-description">
-            최애에 관한 이야기를 들려주세요.
-          </p>
-
+          <h1 className="page-title">게시글 작성</h1>
+          <p className="page-description">최애에 관한 이야기를 들려주세요.</p>
           <PostForm
             submitLabel="작성 완료"
+            isSubmitting={isSubmitting}
+            submitError={submitError}
             onSubmit={handleCreate}
           />
         </section>
