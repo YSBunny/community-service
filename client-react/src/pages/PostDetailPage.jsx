@@ -197,9 +197,9 @@ function PostDetailPage() {
       setActionError("");
 
       if (editingCommentId !== null) {
-        await updateComment(editingCommentId, { content: trimmedContent });
+        await updateComment(postId, editingCommentId, { comment: trimmedContent });
       } else {
-        await createComment(postId, { content: trimmedContent });
+        await createComment(postId, { comment: trimmedContent });
       }
 
       await reloadComments();
@@ -451,7 +451,7 @@ function PostDetailPage() {
                       </div>
 
                       <p className="comment-item__content">
-                        {comment.content}
+                        {comment.commentContent}
                       </p>
 
                       {isCommentAuthor && (
