@@ -109,11 +109,21 @@
   box-shadow: var(--shadow-soft);
 }
 
-#commentInput {
+.comment-form__input {
+  display: block;
+  width: 100%;
   min-height: 120px;
   padding: 18px;
   border: 0;
   border-radius: 0;
+  background: #fff;
+  box-shadow: none;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.comment-form__input:focus {
+  outline: none;
   box-shadow: none;
 }
 

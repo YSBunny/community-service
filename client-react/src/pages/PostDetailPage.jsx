@@ -236,6 +236,7 @@ function PostDetailPage() {
 
           <form className="comment-form" onSubmit={handleCommentSubmit}>
             <textarea
+              className="comment-form__input"
               placeholder="댓글을 입력하세요"
               value={commentText}
               onChange={(event) => setCommentText(event.target.value)}
