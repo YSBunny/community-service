@@ -1,49 +1,51 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
 
-export async function request(url, options = {}) {
+export async function request(path, options = {}) {
+  const { auth = true, body, headers = {}, ...fetchOptions } = options;
   const accessToken = localStorage.getItem("accessToken");
+  const isFormData = body instanceof FormData;
 
-  const isFormData = options.body instanceof FormData;
+  const requestHeaders = { ...headers };
 
-  const headers = {
-    ...options.headers
-  };
-
-  if (accessToken) {
-    headers.Authorization = `Bearer ${accessToken}`;
+  // auth: false이면 JWT를 넣지 않음
+  if (auth && accessToken) {
+    requestHeaders.Authorization = `Bearer ${accessToken}`;
   }
 
-  if (!isFormData) {
-    headers["Content-Type"] = "application/json";
+  // body가 있는 JSON 요청에만 Content-Type을 설정
+  if (body && !isFormData) {
+    requestHeaders["Content-Type"] = "application/json";
   }
 
-  const response = await fetch(`${BASE_URL}${url}`, {
-    ...options,
-    headers
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...fetchOptions,
+    headers: requestHeaders,
+    body
   });
 
-  const isLoginRequest = url.includes("/api/auth/login");
-
-  if (response.status === 204) {
-    return null;
-  }
-  // 토큰에 문제가 있을 때(로그인, 회원가입 요청이 아닌데 401을 반환받았을 때)
-  else if (response.status === 401 && !isLoginRequest) {
-    localStorage.removeItem("userId");
+  // 토큰이 유효하지 않으면 로그인 정보를 지우고 로그인 페이지로 이동
+  if (response.status === 401 && auth) {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("userId");
     window.location.replace("/login");
   }
 
-  if (!response.ok) {
-    const errorText = await response.text();
+  // 모든 응답(JSON, 문자열, 본문 없는, 204 No Content)을 읽을 수 있도록 문자열로 읽어들임
+  const responseText = await response.text();
+  let data = null;
 
-    console.error("API 요청 실패");
-    console.error("요청 URL:", `${BASE_URL}${url}`);
-    console.error("상태 코드:", response.status);
-    console.error("응답 내용:", errorText);
-
-    throw new Error(errorText || "API 요청에 실패했습니다.");
+  if (responseText) {
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      data = responseText;
+    }
   }
 
-  return await response.json();
+  if (!response.ok) {
+    const message = data?.message || data?.error || data || "요청에 실패했습니다.";
+    throw new Error(message);
+  }
+
+  return data;
 }
