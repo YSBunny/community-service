@@ -174,7 +174,7 @@ function PostDetailPage() {
   function startCommentEdit(comment) {
     setEditingCommentId(comment.commentId);
 
-    setCommentText(comment.content);
+    setCommentText(comment.commentContent);
     setActionError("");
   }
 
@@ -260,7 +260,7 @@ function PostDetailPage() {
         return;
       }
 
-      await deleteComment(deleteTarget.id);
+      await deleteComment(postId, deleteTarget.id);
 
       await reloadComments();
       setDeleteTarget(null);
