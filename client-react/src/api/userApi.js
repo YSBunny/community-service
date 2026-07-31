@@ -1,42 +1,36 @@
 import { request } from "./http.js";
 
 // 회원가입
-export function signup({
-    email,
-    password,
-    nickname,
-    profileImage
-}) {
-    const formData = new FormData();
+export function signup({ email, password, nickname, profileImage }) {
+  const formData = new FormData();
 
-    formData.append("email", email);
-    formData.append("password", password);
-    formData.append("nickname", nickname);
-    
-    if (profileImage) {
-        formData.append("profileImage", profileImage);
-    }
+  formData.append("email", email);
+  formData.append("password", password);
+  formData.append("nickname", nickname);
 
-    return request("/users", {
-        method: "POST",
-        body: formData,
-        auth: false // 헤더를 넣지 않음
-    });
+  if (profileImage) {
+    formData.append("profileImage", profileImage);
+  }
+
+  return request("/users", {
+    method: "POST",
+    auth: false,
+    body: formData
+  });
 }
 
 // 회원정보 조회
-export function getUser(userId, options = {}) {
+export function getUser(userId) {
   return request(`/users/${userId}`, {
-    method: "GET",
-    signal: options.signal
+    method: "GET"
   });
 }
 
 // 회원정보 수정
-export function updateUser(userId, userData) {
+export function updateUser(userId, formData) {
   return request(`/users/${userId}`, {
     method: "PATCH",
-    body: userData
+    body: formData
   });
 }
 
