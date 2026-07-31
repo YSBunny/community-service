@@ -41,9 +41,9 @@ function PostListPage() {
 
         <section className="board-section">
           <div className="board-toolbar">
-            <button type="button" className="write-button" id="writePostButton">
-              게시글 작성
-            </button>
+            <Link to="/posts/new" className="write-button">
+              글쓰기
+            </Link>
           </div>
 
           <ul className="post-list">
