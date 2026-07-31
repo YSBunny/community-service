@@ -5,62 +5,40 @@ function ConfirmModal({
   title,
   message,
   confirmText = "확인",
-  cancelText = "취소",
   isProcessing = false,
   onConfirm,
   onClose
 }) {
+  // 모달이 열려 있는 동안 뒤쪽 화면의 스크롤 막음
   useEffect(() => {
     if (!isOpen) {
-      return undefined;
+      return;
     }
 
     document.body.classList.add("modal-open");
 
-    function handleKeyDown(event) {
-      if (event.key === "Escape" && !isProcessing) {
-        onClose();
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-
     return () => {
       document.body.classList.remove("modal-open");
-
-      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, isProcessing, onClose]);
+  }, [isOpen]);
 
   if (!isOpen) {
     return null;
   }
 
   function handleOverlayClick(event) {
-    if (event.target === event.currentTarget && !isProcessing) {
+    const clickedOverlay = event.target === event.currentTarget;
+
+    if (clickedOverlay && !isProcessing) {
       onClose();
     }
   }
 
   return (
-    <div
-      className="modal-overlay"
-      onMouseDown={handleOverlayClick}
-    >
-      <section
-        className="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="confirm-modal-title"
-        aria-describedby="confirm-modal-message"
-      >
-        <h2 id="confirm-modal-title" className="modal__title">
-          {title}
-        </h2>
-
-        <p id="confirm-modal-message" className="modal__message">
-          {message}
-        </p>
+    <div className="modal-overlay" onMouseDown={handleOverlayClick}>
+      <section className="modal" role="dialog" aria-modal="true">
+        <h2 className="modal__title">{title}</h2>
+        <p className="modal__message">{message}</p>
 
         <div className="modal__actions">
           <button
@@ -69,7 +47,7 @@ function ConfirmModal({
             onClick={onClose}
             disabled={isProcessing}
           >
-            {cancelText}
+            취소
           </button>
 
           <button
