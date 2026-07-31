@@ -23,3 +23,39 @@ export function signup({
         auth: false // 헤더를 넣지 않음
     });
 }
+
+// 회원정보 조회
+export function getUser(userId, options = {}) {
+  return request(`/users/${userId}`, {
+    method: "GET",
+    signal: options.signal
+  });
+}
+
+// 회원정보 수정
+export function updateUser(userId, {
+    password,
+    nickname,
+    profileImage
+}) {
+    const formData = new FormData();
+
+    formData.append("password", password);
+    formData.append("nickname", nickname);
+
+    if (profileImage) {
+        formData.append("profileImage", profileImage);
+    }
+
+  return request(`/users/${userId}`, {
+    method: "PATCH",
+    body: formData
+  });
+}
+
+// 회원 탈퇴
+export function deleteUser(userId) {
+  return request(`/users/${userId}`, {
+    method: "DELETE"
+  });
+}
