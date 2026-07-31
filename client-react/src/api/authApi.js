@@ -8,3 +8,10 @@ export function login(loginData) {
         auth: false
     });
 }
+
+// 로그아웃
+export function logout() {
+    return request(`/auth/logout`, {
+        method: "POST"
+    });
+}
