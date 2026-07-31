@@ -57,10 +57,14 @@ body::before {
   mask-image: linear-gradient(to bottom, #000, transparent 65%);
 }
 
+/* 헤더는 화면에 고정되지 않지만, 본문보다 위에 표시 */
 .header {
-  position: static;
+  position: relative;
+  z-index: 50;
+
   width: 100%;
   height: 72px;
+
   border-bottom: none;
   background: transparent;
   backdrop-filter: none;
@@ -68,12 +72,17 @@ body::before {
 
 .header__inner {
   position: relative;
+
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+
   width: min(100% - 32px, 760px);
   height: 100%;
   margin: 0 auto;
+
+  /* 드롭다운이 헤더 영역 밖에서도 보이도록 설정 */
+  overflow: visible;
 }
 
 .header__title {
@@ -114,9 +123,11 @@ body::before {
   transform: translateX(-50%);
 }
 
+/* 본문이 드롭다운을 덮지 않도록 수정 */
 .main {
   position: relative;
-  z-index: 1;
+  z-index: 0;
+
   width: min(100% - 32px, 720px);
   margin: 0 auto;
   padding: 48px 0 80px;
@@ -145,23 +156,32 @@ body::before {
 
 .profile-menu-area {
   position: absolute;
+  top: 50%;
   right: 0;
+  z-index: 60;
+
+  display: flex;
+  align-items: center;
+
+  transform: translateY(-50%);
 }
 
 .profile-button {
-  overflow: hidden;
+  position: relative;
+  z-index: 2;
+
+  display: grid;
+  place-items: center;
+
   width: 42px;
   height: 42px;
-  border: 2px solid #fff;
+  padding: 0;
+
+  overflow: hidden;
+
+  border: 2px solid var(--primary);
   border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    var(--primary-soft),
-    var(--accent-soft)
-  );
-  box-shadow:
-    0 0 0 2px var(--primary),
-    var(--shadow-soft);
+  background: var(--primary-light);
 }
 
 .profile-button img {
@@ -172,29 +192,57 @@ body::before {
 
 .profile-dropdown {
   position: absolute;
-  top: 54px;
+  top: calc(100% + 12px);
   right: 0;
-  width: 170px;
+  z-index: 70;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  width: 190px;
   padding: 8px;
-  border: 1px solid var(--line);
+
+  border: 1px solid var(--border);
   border-radius: 16px;
   background: #fff;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-soft);
+
+  pointer-events: auto;
 }
 
+/* Link와 button을 동일한 세로 메뉴 항목으로 만듦 */
 .profile-dropdown__item {
+  display: flex;
+  align-items: center;
+
   width: 100%;
-  padding: 12px 14px;
+  min-height: 42px;
+  padding: 10px 14px;
+
+  border: 0;
   border-radius: 10px;
-  color: var(--ink);
+  background: transparent;
+
+  color: var(--text);
   font-size: 14px;
   font-weight: 650;
+  line-height: 1.4;
   text-align: left;
+  white-space: nowrap;
+  text-decoration: none;
+
+  cursor: pointer;
 }
 
 .profile-dropdown__item:hover {
-  background: var(--primary-pale);
-  color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.profile-dropdown__item:focus-visible {
+  outline: 3px solid rgba(111, 78, 255, 0.25);
+  outline-offset: 1px;
 }
 
 .page-title {

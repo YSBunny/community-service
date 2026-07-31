@@ -7,6 +7,16 @@
   box-shadow: var(--shadow);
 }
 
+.profile-edit-section .page-title {
+  margin-bottom: 18px;
+}
+
+.profile-edit-section .section-description {
+  margin: 0 auto 28px;
+  text-align: center;
+  line-height: 1.6;
+}
+
 .profile-edit-form {
   display: flex;
   flex-direction: column;
