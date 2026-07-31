@@ -5,6 +5,7 @@ import SignupPage from "./pages/SignupPage.jsx";
 import PostListPage from "./pages/PostListPage.jsx";
 import PostEditPage from "./pages/PostEditPage.jsx";
 import PostDetailPage from "./pages/PostDetailPage.jsx";
+import ProfileEditPage from "./pages/ProfileEditPage.jsx";
 
 import "./App.css";
 import PostCreatePage from "./pages/PostCreatePage.jsx";
@@ -28,6 +29,11 @@ function App() {
           element={<SignupPage />}
         />
 
+        <Route
+          path="/users/:userId/edit"
+          element={<ProfileEditPage />}
+        />
+        
         <Route
           path="/posts"
           element={<PostListPage />}
