@@ -1,11 +1,8 @@
 import { Link, useNavigate } from "react-router";
-import ProfileMenu from "./ProfileMenu";
 
-function Header({
-  showBackButton = false,
-  showProfileMenu = false,
-  user
-}) {
+import ProfileMenu from "./ProfileMenu.jsx";
+
+function Header({ showBackButton = false, showProfileMenu = false, user }) {
   const navigate = useNavigate();
 
   function handleBack() {
@@ -15,8 +12,7 @@ function Header({
   return (
     <header className="header">
       <div className="header__inner">
-        {/* showBackButton이 true면 버튼 렌더링 */
-        showBackButton && (
+        {showBackButton && (
           <button
             type="button"
             className="back-button"
@@ -31,10 +27,7 @@ function Header({
           냐르륵
         </Link>
 
-        {/* showProfileMenu이 true면 프로필 메뉴 렌더링 */
-        showProfileMenu && (
-          <ProfileMenu user={user} />
-        )}
+        {showProfileMenu && <ProfileMenu user={user} />}
       </div>
     </header>
   );
