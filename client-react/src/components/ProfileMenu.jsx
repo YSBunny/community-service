@@ -1,62 +1,32 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 import { logout } from "../api/authApi.js";
-
-import defaultProfileImage from "../assets/images/defaultProfile.png";
-
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-
-function getProfileImageUrl(profileImage) {
-  if (!profileImage) {
-    return defaultProfileImage;
-  }
-
-  /*
-   * 이미 완성된 URL 또는 public 경로라면
-   * 그대로 사용합니다.
-   */
-  if (
-    profileImage.startsWith("http://") ||
-    profileImage.startsWith("https://") ||
-    profileImage.startsWith("/")
-  ) {
-    return profileImage;
-  }
-
-  return `${SERVER_URL}/uploads/profiles/${encodeURIComponent(profileImage)}`;
-}
+import { getProfileImageUrl, useDefaultProfileImage } from "../utils/imageUrl.js";
 
 function ProfileMenu({ user }) {
   const navigate = useNavigate();
+  const menuRef = useRef(null);
 
   const [isOpen, setIsOpen] = useState(false);
-
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const userId = user?.userId ?? localStorage.getItem("userId");
+  const userId = user?.userId || localStorage.getItem("userId");
 
-  const profileImageUrl = getProfileImageUrl(user?.profileImage);
-
-  function handleToggle() {
-    setIsOpen((previousIsOpen) => !previousIsOpen);
-  }
-
-  function handleClose() {
-    setIsOpen(false);
-  }
-
-  function handleImageError(event) {
-    const image = event.currentTarget;
-
-    if (image.dataset.fallbackApplied === "true") {
-      return;
+  // 메뉴 밖을 클릭하면 드롭다운 닫음
+  useEffect(() => {
+    function closeMenuWhenClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
     }
 
-    image.dataset.fallbackApplied = "true";
+    document.addEventListener("mousedown", closeMenuWhenClickOutside);
 
-    image.src = defaultProfileImage;
-  }
+    return () => {
+      document.removeEventListener("mousedown", closeMenuWhenClickOutside);
+    };
+  }, []);
 
   async function handleLogout() {
     if (isLoggingOut) {
@@ -65,64 +35,50 @@ function ProfileMenu({ user }) {
 
     try {
       setIsLoggingOut(true);
-
       await logout();
     } catch (error) {
-      /*
-       * 서버 요청이 실패해도 브라우저의 토큰을
-       * 삭제하면 현재 브라우저에서는 로그아웃됩니다.
-       */
+      // 서버 로그아웃이 실패해도 현재 브라우저의 로그인 정보 제거
       console.error("로그아웃 요청 실패:", error);
     } finally {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("userId");
-
-      setIsOpen(false);
-
-      navigate("/login", {
-        replace: true
-      });
+      navigate("/login", { replace: true });
     }
   }
 
   return (
-    <div className="profile-menu-area">
+    <div className="profile-menu-area" ref={menuRef}>
       <button
         type="button"
         className="profile-button"
-        onClick={handleToggle}
-        aria-label={isOpen ? "프로필 메뉴 닫기" : "프로필 메뉴 열기"}
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label="프로필 메뉴 열기"
         aria-expanded={isOpen}
-        aria-controls="profile-dropdown"
       >
         <img
-          src={profileImageUrl}
-          alt={`${user?.nickname ?? "사용자"} 프로필`}
-          onError={handleImageError}
+          src={getProfileImageUrl(user?.profileImage)}
+          alt="프로필"
+          onError={useDefaultProfileImage}
         />
       </button>
 
       {isOpen && (
-        <nav id="profile-dropdown" className="profile-dropdown" aria-label="프로필 메뉴">
-          {userId && (
-            <>
-              <Link
-                to={`/users/${userId}/edit`}
-                className="profile-dropdown__item"
-                onClick={handleClose}
-              >
-                회원정보 수정
-              </Link>
+        <nav className="profile-dropdown" aria-label="프로필 메뉴">
+          <Link
+            to={`/users/${userId}/edit`}
+            className="profile-dropdown__item"
+            onClick={() => setIsOpen(false)}
+          >
+            회원정보 수정
+          </Link>
 
-              <Link
-                to={`/users/${userId}/password`}
-                className="profile-dropdown__item"
-                onClick={handleClose}
-              >
-                비밀번호 수정
-              </Link>
-            </>
-          )}
+          <Link
+            to={`/users/${userId}/password`}
+            className="profile-dropdown__item"
+            onClick={() => setIsOpen(false)}
+          >
+            비밀번호 수정
+          </Link>
 
           <button
             type="button"
