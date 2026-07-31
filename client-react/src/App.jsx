@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
 import PostListPage from "./pages/PostListPage.jsx";
 import PostEditPage from "./pages/PostEditPage.jsx";
+import PostDetailPage from "./pages/PostDetailPage.jsx";
 
 import "./App.css";
 import PostCreatePage from "./pages/PostCreatePage.jsx";
@@ -35,6 +36,11 @@ function App() {
         <Route
           path="/posts/new"
           element={<PostCreatePage />}
+        />
+
+        <Route
+          path="/posts/:postId"
+          element={<PostDetailPage />}
         />
 
         <Route
