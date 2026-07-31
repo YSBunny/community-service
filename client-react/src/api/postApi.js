@@ -27,9 +27,16 @@ export function createPost(postData) {
     });
 }
 
-// 게시글 목록
+// 게시글 목록 조회
 export function getPosts() {
     return request("/posts", {
+        method: "GET"
+    });
+}
+
+// 게시글 상세 조회
+export function getPost(postId) {
+    return request(`/posts/${postId}`, {
         method: "GET"
     });
 }
@@ -41,5 +48,12 @@ export function updatePost(postId, postData) {
     return request(`/posts/${postId}`, {
         method: "PATCH",
         body: formData
+    });
+}
+
+// 게시글 삭제
+export function deletePost(postId) {
+    return request(`/posts/${postId}`, {
+        method: "DELETE"
     });
 }
