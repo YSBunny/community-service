@@ -33,23 +33,10 @@ export function getUser(userId, options = {}) {
 }
 
 // 회원정보 수정
-export function updateUser(userId, {
-    password,
-    nickname,
-    profileImage
-}) {
-    const formData = new FormData();
-
-    formData.append("password", password);
-    formData.append("nickname", nickname);
-
-    if (profileImage) {
-        formData.append("profileImage", profileImage);
-    }
-
+export function updateUser(userId, userData) {
   return request(`/users/${userId}`, {
     method: "PATCH",
-    body: formData
+    body: userData
   });
 }
 
