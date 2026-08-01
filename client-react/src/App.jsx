@@ -11,11 +11,20 @@ import SignupPage from "./pages/SignupPage.jsx";
 
 import "./App.css";
 
-// 로그인한 사용자만 자식 Route를 보여주는 컴포넌트
-function ProtectedRoute() {
+function hasCompleteLoginInformation() {
   const accessToken = localStorage.getItem("accessToken");
+  const userId = localStorage.getItem("userId");
 
-  if (!accessToken) {
+  return Boolean(accessToken && userId);
+}
+
+// accessToken과 userId가 모두 있는 사용자에게만 자식 Route를 보여줌
+function ProtectedRoute() {
+  if (!hasCompleteLoginInformation()) {
+    // 둘 중 하나만 남아 있는 불완전한 로그인 정보도 함께 정리한다.
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("userId");
+
     return <Navigate to="/login" replace />;
   }
 
@@ -23,14 +32,14 @@ function ProtectedRoute() {
 }
 
 function App() {
-  const accessToken = localStorage.getItem("accessToken");
+  const isLoggedIn = hasCompleteLoginInformation();
 
   return (
     <div className="app">
       <Routes>
         <Route
           path="/"
-          element={<Navigate to={accessToken ? "/posts" : "/login"} replace />}
+          element={<Navigate to={isLoggedIn ? "/posts" : "/login"} replace />}
         />
 
         <Route path="/login" element={<LoginPage />} />
