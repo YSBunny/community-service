@@ -28,6 +28,15 @@ function PostEditPage() {
           throw new Error("게시글 응답을 확인해주세요.");
         }
 
+        const currentUserId = localStorage.getItem("userId");
+        const isAuthor = String(loadedPost.authorId) === String(currentUserId);
+
+        // 주소를 직접 입력했더라도 작성자가 아니면 수정 화면을 보여주지 않음
+        if (!isAuthor) {
+          navigate(`/posts/${postId}`, { replace: true });
+          return;
+        }
+
         if (!isCancelled) {
           setPost(loadedPost);
         }
@@ -43,8 +52,11 @@ function PostEditPage() {
     }
 
     loadPost();
-    return () => { isCancelled = true; };
-  }, [postId]);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [navigate, postId]);
 
   async function handleUpdate(postData) {
     try {
