@@ -1,67 +1,67 @@
-### Backend - Spring Boot / Gradle ###
-server/HELP.md
-server/.gradle/
-server/build/
-server/uploads/
-!server/gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### Backend env ###
-server/.env
-server/.env.local
-server/application-local.yml
-server/application-local.yaml
-server/src/main/resources/application-secret.yml
-server/src/main/resources/application-secret.yaml
-
-### Frontend - Vanilla JS ###
-client/.env
-client/.env.local
+# =========================
+# Frontend: client
+# =========================
+client/node_modules/
 client/dist/
 client/build/
+client/coverage/
+client/*.local
 
-### Logs ###
-*.log
-logs/
-server/logs/
-client/logs/
+# Frontend environment variables
+client/.env
+client/.env.*
+!client/.env.example
 
-### IntelliJ IDEA ###
-.idea/
-server/.idea/
-client/.idea/
-*.iws
-*.iml
-*.ipr
-out/
+# =========================
+# Backend: server
+# =========================
+server/.gradle/
+server/build/
 server/out/
-client/out/
-!**/src/main/**/out/
-!**/src/test/**/out/
+server/bin/
+server/*.class
+!server/gradle/wrapper/gradle-wrapper.jar
 
-### VS Code ###
-.vscode/
+# Backend environment variables and local configuration
+server/.env
+server/.env.*
+!server/.env.example
+server/src/main/resources/application-local.yml
+server/src/main/resources/application-local.yaml
+server/src/main/resources/application-local.properties
+server/src/main/resources/application-secret.yml
+server/src/main/resources/application-secret.yaml
+server/src/main/resources/application-secret.properties
 
-### STS / Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings/
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
+# Backend runtime data
+server/uploads/
+server/logs/
+server/*.pid
+server/*.db
+server/*.sqlite
+server/*.sqlite3
+server/*.mv.db
+server/*.trace.db
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+# =========================
+# Shared
+# =========================
+.idea/
+**/.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+**/*.iml
+**/*.iws
+**/*.ipr
 
-### OS files ###
+logs/
+**/*.log
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/pnpm-debug.log*
+
 .DS_Store
+**/.DS_Store
 Thumbs.db
