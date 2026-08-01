@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 import { logout } from "../api/authApi.js";
+import { getUser } from "../api/userApi.js";
 import { getProfileImageUrl, useDefaultProfileImage } from "../utils/imageUrl.js";
 
 function ProfileMenu({ user }) {
@@ -10,10 +11,49 @@ function ProfileMenu({ user }) {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [profileImage, setProfileImage] = useState(user?.profileImage || "");
 
   const userId = user?.userId || localStorage.getItem("userId");
 
-  // 메뉴 밖을 클릭하면 드롭다운 닫음
+  // Header가 user를 받지 않은 페이지에서는 현재 사용자의 정보를 직접 조회
+  useEffect(() => {
+    if (user?.profileImage !== undefined) {
+      setProfileImage(user.profileImage || "");
+      return;
+    }
+
+    if (!userId) {
+      setProfileImage("");
+      return;
+    }
+
+    let isCancelled = false;
+
+    async function loadProfileImage() {
+      try {
+        const response = await getUser(userId);
+        const loadedUser = response?.user || response;
+
+        if (!isCancelled) {
+          setProfileImage(loadedUser?.profileImage || "");
+        }
+      } catch (error) {
+        // 조회에 실패하면 기본 이미지를 보여주고 메뉴의 다른 기능은 유지
+        console.error("프로필 이미지 조회 실패:", error);
+        if (!isCancelled) {
+          setProfileImage("");
+        }
+      }
+    }
+
+    loadProfileImage();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [userId, user?.profileImage]);
+
+  // 메뉴 밖을 클릭하면 드롭다운을 닫음
   useEffect(() => {
     function closeMenuWhenClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -37,7 +77,7 @@ function ProfileMenu({ user }) {
       setIsLoggingOut(true);
       await logout();
     } catch (error) {
-      // 서버 로그아웃이 실패해도 현재 브라우저의 로그인 정보 제거
+      // 서버 요청이 실패해도 현재 브라우저의 로그인 정보는 제거
       console.error("로그아웃 요청 실패:", error);
     } finally {
       localStorage.removeItem("accessToken");
@@ -51,12 +91,12 @@ function ProfileMenu({ user }) {
       <button
         type="button"
         className="profile-button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen((previousIsOpen) => !previousIsOpen)}
         aria-label="프로필 메뉴 열기"
         aria-expanded={isOpen}
       >
         <img
-          src={getProfileImageUrl(user?.profileImage)}
+          src={getProfileImageUrl(profileImage)}
           alt="프로필"
           onError={useDefaultProfileImage}
         />
