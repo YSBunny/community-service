@@ -2,6 +2,8 @@ import { useState } from "react";
 
 import "../styles/PostForm.css";
 
+const TITLE_MAX_LENGTH = 26;
+
 function PostForm({
   initialTitle = "",
   initialContent = "",
@@ -19,11 +21,17 @@ function PostForm({
 
   const trimmedTitle = title.trim();
   const trimmedContent = content.trim();
-  const isFormValid = trimmedTitle !== "" && trimmedContent !== "";
+  const isTitleValid =
+    trimmedTitle !== "" && trimmedTitle.length <= TITLE_MAX_LENGTH;
+  const isFormValid = isTitleValid && trimmedContent !== "";
 
-  const titleError = titleTouched && trimmedTitle === ""
-    ? "* 제목을 입력해주세요."
-    : "";
+  let titleError = "";
+
+  if (titleTouched && trimmedTitle === "") {
+    titleError = "* 제목을 입력해주세요.";
+  } else if (titleTouched && trimmedTitle.length > TITLE_MAX_LENGTH) {
+    titleError = `* 제목은 ${TITLE_MAX_LENGTH}자 이하로 입력해주세요.`;
+  }
 
   const contentError = contentTouched && trimmedContent === ""
     ? "* 내용을 입력해주세요."
@@ -57,10 +65,14 @@ function PostForm({
           className="title-input"
           placeholder="제목을 입력하세요"
           value={title}
+          maxLength={TITLE_MAX_LENGTH}
           onChange={(event) => setTitle(event.target.value)}
           onBlur={() => setTitleTouched(true)}
+          aria-describedby="title-helper-text"
         />
-        <p className="helper-text">{titleError}</p>
+        <p id="title-helper-text" className="helper-text">
+          {titleError}
+        </p>
       </div>
 
       <div className="form-group">
@@ -72,8 +84,11 @@ function PostForm({
           value={content}
           onChange={(event) => setContent(event.target.value)}
           onBlur={() => setContentTouched(true)}
+          aria-describedby="content-helper-text"
         />
-        <p className="helper-text">{contentError}</p>
+        <p id="content-helper-text" className="helper-text">
+          {contentError}
+        </p>
       </div>
 
       <div className="form-group">
