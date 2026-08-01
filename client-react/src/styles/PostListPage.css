@@ -70,6 +70,16 @@
   gap: 18px;
 }
 
+.post-list__item,
+.post-card__link,
+.post-card {
+  height: 100%;
+}
+
+.post-card__link {
+  display: block;
+}
+
 .post-card {
   position: relative;
   overflow: hidden;

@@ -18,17 +18,25 @@
   text-align: center;
 }
 
-.profile-label {
+.signup-section .profile-label {
   margin-bottom: 12px;
   font-size: 14px;
   font-weight: 800;
 }
 
-.profile-input {
-  display: none;
+.signup-section .profile-input {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  white-space: nowrap;
+  clip-path: inset(50%);
 }
 
-.profile-upload-button {
+.signup-section .profile-upload-button {
   position: relative;
   display: grid;
   place-items: center;
@@ -38,17 +46,13 @@
   margin: 0 auto;
   border: 2px dashed #c9bcf7;
   border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    var(--primary-soft),
-    var(--accent-soft)
-  );
+  background: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
   cursor: pointer;
   box-shadow: 0 10px 24px rgba(123, 92, 255, 0.16);
 }
 
-.profile-upload-button::before,
-.profile-upload-button::after {
+.signup-section .profile-upload-button::before,
+.signup-section .profile-upload-button::after {
   content: "";
   position: absolute;
   top: 4px;
@@ -59,15 +63,15 @@
   transform: rotate(45deg);
 }
 
-.profile-upload-button::before {
+.signup-section .profile-upload-button::before {
   left: 14px;
 }
 
-.profile-upload-button::after {
+.signup-section .profile-upload-button::after {
   right: 14px;
 }
 
-.profile-preview {
+.signup-section .profile-preview {
   position: relative;
   z-index: 2;
   width: 100%;
@@ -75,7 +79,7 @@
   object-fit: cover;
 }
 
-.profile-plus {
+.signup-section .profile-plus {
   position: relative;
   z-index: 2;
   color: var(--primary);
@@ -83,7 +87,7 @@
   font-weight: 300;
 }
 
-.form-fields {
+.signup-form .form-fields {
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -91,6 +95,18 @@
 
 .signup-form .signup-button {
   width: 100%;
+}
+
+.signup-section .profile-input:focus-visible + .profile-upload-button {
+  outline: 3px solid rgba(123, 92, 255, 0.25);
+  outline-offset: 3px;
+}
+
+.signup-error {
+  color: var(--danger);
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
 }
 
 .login-guide {

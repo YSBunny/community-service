@@ -19,29 +19,6 @@
   text-align: center;
 }
 
-.page-status,
-.page-error {
-  width: 100%;
-  padding: 36px 24px;
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.94);
-  font-size: 14px;
-  line-height: 1.6;
-  text-align: center;
-  box-shadow: var(--shadow);
-}
-
-.page-status {
-  color: var(--muted);
-}
-
-.page-error {
-  border-color: rgba(230, 79, 103, 0.2);
-  background: rgba(255, 255, 255, 0.96);
-  color: var(--danger);
-}
-
 @media (max-width: 600px) {
   .post-form-main {
     padding-top: 28px;
@@ -50,10 +27,5 @@
   .page-description {
     margin-bottom: 24px;
     font-size: 13px;
-  }
-
-  .page-status,
-  .page-error {
-    padding: 28px 20px;
   }
 }

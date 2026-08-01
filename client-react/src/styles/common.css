@@ -181,7 +181,7 @@ body::before {
 
   border: 2px solid var(--primary);
   border-radius: 50%;
-  background: var(--primary-light);
+  background: var(--primary-soft);
 }
 
 .profile-button img {
@@ -203,7 +203,7 @@ body::before {
   width: 190px;
   padding: 8px;
 
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   border-radius: 16px;
   background: #fff;
   box-shadow: var(--shadow-soft);
@@ -224,7 +224,7 @@ body::before {
   border-radius: 10px;
   background: transparent;
 
-  color: var(--text);
+  color: var(--ink);
   font-size: 14px;
   font-weight: 650;
   line-height: 1.4;
@@ -236,7 +236,7 @@ body::before {
 }
 
 .profile-dropdown__item:hover {
-  background: var(--primary-light);
+  background: var(--primary-soft);
   color: var(--primary-dark);
 }
 
@@ -320,16 +320,23 @@ body::before {
   transition: 0.2s;
 }
 
+/* button과 Link로 만든 주요 버튼을 같은 방식으로 정렬 */
+.submit-button,
+.login-button,
+.signup-button,
+.write-button,
+.comment-submit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .submit-button,
 .login-form .login-button,
 .signup-form .signup-button,
 .write-button,
 .comment-submit-button {
-  background: linear-gradient(
-    135deg,
-    var(--primary),
-    var(--primary-dark)
-  );
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: #fff;
   box-shadow: 0 10px 22px rgba(123, 92, 255, 0.24);
 }
@@ -385,10 +392,11 @@ button:disabled {
   font-weight: 900;
 }
 
-.modal__description {
+.modal__message {
   margin-top: 10px;
   color: var(--muted);
   font-size: 14px;
+  line-height: 1.6;
 }
 
 .modal__actions {
@@ -458,6 +466,29 @@ button:disabled {
 .post-date {
   color: var(--muted);
   font-size: 12px;
+}
+
+/* 여러 페이지에서 공통으로 사용하는 로딩·오류 상태 */
+.page-status,
+.page-error {
+  width: 100%;
+  padding: 32px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.96);
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.page-status {
+  color: var(--muted);
+}
+
+.page-error {
+  border-color: rgba(230, 79, 103, 0.2);
+  color: var(--danger);
 }
 
 .auth-description,

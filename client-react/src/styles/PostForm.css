@@ -124,7 +124,7 @@
 }
 
 /* API 요청 실패 메시지 */
-.post-form .submit-error {
+.post-form .form-error {
   margin: -4px 0;
   color: var(--danger);
   font-size: 13px;

@@ -92,8 +92,7 @@
   transform: translateY(-1px);
 }
 
-.profile-image-input:focus-visible +
-.profile-change-button {
+.profile-image-input:focus-visible + .profile-change-button {
   outline: 3px solid rgba(123, 92, 255, 0.25);
   outline-offset: 3px;
 }
@@ -106,7 +105,7 @@
   line-height: 1.5;
 }
 
-.form-fields {
+.profile-edit-form .form-fields {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -124,16 +123,13 @@
   word-break: break-all;
 }
 
-.profile-edit-form
-.form-input[aria-invalid="true"] {
+.profile-edit-form .form-input[aria-invalid="true"] {
   border-color: var(--danger);
 }
 
-.profile-edit-form
-.form-input[aria-invalid="true"]:focus {
+.profile-edit-form .form-input[aria-invalid="true"]:focus {
   border-color: var(--danger);
-  box-shadow:
-    0 0 0 4px rgba(230, 79, 103, 0.1);
+  box-shadow: 0 0 0 4px rgba(230, 79, 103, 0.1);
 }
 
 .profile-edit-error {
@@ -159,23 +155,6 @@
 
 .withdraw-button:hover {
   color: #c63850;
-}
-
-.page-status,
-.page-error {
-  padding: 32px 24px;
-  border-radius: var(--radius-lg);
-  background: #fff;
-  text-align: center;
-  box-shadow: var(--shadow);
-}
-
-.page-status {
-  color: var(--muted);
-}
-
-.page-error {
-  color: var(--danger);
 }
 
 @media (max-width: 600px) {

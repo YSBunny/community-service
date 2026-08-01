@@ -61,7 +61,7 @@
 }
 
 .login-form,
-.form-fields {
+.login-form .form-fields {
   display: flex;
   flex-direction: column;
 }
@@ -70,8 +70,13 @@
   gap: 24px;
 }
 
-.form-fields {
+.login-form .form-fields {
   gap: 16px;
+}
+
+.login-error {
+  margin-top: -6px;
+  text-align: center;
 }
 
 .login-form .login-button {
