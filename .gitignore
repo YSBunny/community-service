@@ -32,6 +32,7 @@ server/src/main/resources/application-secret.yaml
 server/src/main/resources/application-secret.properties
 
 # Backend runtime data
+server/data/
 server/uploads/
 server/logs/
 server/*.pid
@@ -44,6 +45,7 @@ server/*.trace.db
 # =========================
 # Shared
 # =========================
+.env
 .idea/
 **/.idea/
 .vscode/*
