@@ -26,6 +26,7 @@ src/main/resources/application-secret.yaml
 src/main/resources/application-secret.properties
 
 # Uploaded files and runtime data
+data/
 uploads/
 logs/
 *.log
