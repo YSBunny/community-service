@@ -11,6 +11,7 @@ client/*.local
 client/.env
 client/.env.*
 !client/.env.example
+!client/.env.production
 
 # =========================
 # Backend: server
