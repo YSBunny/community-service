@@ -9,6 +9,7 @@ build/
 .env
 .env.*
 !.env.example
+!.env.production
 
 # Test and coverage output
 coverage/
