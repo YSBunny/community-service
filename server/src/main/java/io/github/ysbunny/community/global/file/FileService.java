@@ -30,14 +30,12 @@ public class FileService {
 
         String originalFilename = file.getOriginalFilename();
 
-        String extension = "";
-
         if (originalFilename != null && originalFilename.contains(".")) {
             // 파일의 확장자 추출
-            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
 
             // 저장할 파일명을 랜덤으로
-            String savedFileName = UUID.randomUUID().toString() + extension;
+            String savedFileName = UUID.randomUUID() + extension;
 
             // 게시글 이미지, 프로필 이미지 등을 저장할 하위 폴더 경로
             Path directoryPath = uploadDirectory.resolve(directoryName);
