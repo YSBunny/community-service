@@ -11,6 +11,7 @@ client/*.local
 client/.env
 client/.env.*
 !client/.env.example
+!client/.env.production
 
 # =========================
 # Backend: server
@@ -26,14 +27,12 @@ server/*.class
 server/.env
 server/.env.*
 !server/.env.example
-server/src/main/resources/application-local.yml
-server/src/main/resources/application-local.yaml
-server/src/main/resources/application-local.properties
 server/src/main/resources/application-secret.yml
 server/src/main/resources/application-secret.yaml
 server/src/main/resources/application-secret.properties
 
 # Backend runtime data
+server/data/
 server/uploads/
 server/logs/
 server/*.pid
@@ -46,6 +45,7 @@ server/*.trace.db
 # =========================
 # Shared
 # =========================
+.env
 .idea/
 **/.idea/
 .vscode/*

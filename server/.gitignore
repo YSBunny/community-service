@@ -18,17 +18,15 @@ bin/
 .vscode/
 
 # Environment variables and local configuration
-.env
-.env.*
-!.env.example
-src/main/resources/application-local.yml
-src/main/resources/application-local.yaml
-src/main/resources/application-local.properties
+../.env
+../.env.*
+!../.env.example
 src/main/resources/application-secret.yml
 src/main/resources/application-secret.yaml
 src/main/resources/application-secret.properties
 
 # Uploaded files and runtime data
+data/
 uploads/
 logs/
 *.log

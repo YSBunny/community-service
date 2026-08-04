@@ -67,7 +67,7 @@ class AuthServiceTest {
                 List.of(new SimpleGrantedAuthority("ROLE_USER"))
         );
 
-        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndDeletedAtIsNull(request.getEmail())).thenReturn(Optional.of(user));
         when(authenticationManager.authenticate(token)).thenReturn(returnToken);
         when(tokenProvider.createToken(returnToken)).thenReturn("jZMqqjm97WTcxk6czWBrj3H6owO+PzshRUHgQF9uNWA=");
 
@@ -79,7 +79,7 @@ class AuthServiceTest {
         assertEquals(1L, response.getUserId());
         assertEquals("jZMqqjm97WTcxk6czWBrj3H6owO+PzshRUHgQF9uNWA=", response.getToken());
 
-        verify(userRepository, times(1)).findByEmail(request.getEmail());
+        verify(userRepository, times(1)).findByEmailAndDeletedAtIsNull(request.getEmail());
         verify(authenticationManager, times(1)).authenticate(token);
         verify(tokenProvider, times(1)).createToken(returnToken);
     }
@@ -92,12 +92,12 @@ class AuthServiceTest {
                 "password123!"
         );
 
-        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.empty());
+        when(userRepository.findByEmailAndDeletedAtIsNull(request.getEmail())).thenReturn(Optional.empty());
 
         // when & then
         assertThrows(IllegalArgumentException.class, () -> authService.login(request));
 
-        verify(userRepository, times(1)).findByEmail(request.getEmail());
+        verify(userRepository, times(1)).findByEmailAndDeletedAtIsNull(request.getEmail());
     }
 
     @Test
@@ -121,13 +121,13 @@ class AuthServiceTest {
                 request.getPassword()
         );
 
-        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndDeletedAtIsNull(request.getEmail())).thenReturn(Optional.of(user));
         when(authenticationManager.authenticate(token)).thenThrow(new BadCredentialsException("Bad credentials"));
 
         // when & then
         assertThrows(BadCredentialsException.class, () -> authService.login(request));
 
-        verify(userRepository, times(1)).findByEmail(request.getEmail());
+        verify(userRepository, times(1)).findByEmailAndDeletedAtIsNull(request.getEmail());
         verify(authenticationManager, times(1)).authenticate(token);
     }
 }
