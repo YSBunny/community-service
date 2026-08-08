@@ -75,7 +75,7 @@ rollback() {
 trap rollback ERR
 
 if [[ ! -f "${COMPOSE_FILE}" ]]; then
-  echo "compose.yml을 찾을 수 없습니다: ${COMPOSE_FILE}"
+  echo "compose.yaml을 찾을 수 없습니다: ${COMPOSE_FILE}"
   exit 1
 fi
 
