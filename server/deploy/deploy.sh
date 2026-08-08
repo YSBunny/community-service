@@ -18,7 +18,7 @@ UPDATED=false
 compose() {
   docker compose \
     --env-file "${ENV_FILE}" \
-    --env-file "${IMAGES_FILE}" \
+    --env-file "${IMAGES_ENV_FILE}" \
     -f "${COMPOSE_FILE}" \
     "$@"
 }
@@ -44,8 +44,8 @@ validate_image() {
 current_image() {
   local variable_name="$1"
 
-  if [[ -f "${IMAGES_FILE}" ]]; then
-    sed -n "s/^${variable_name}=//p" "${IMAGES_FILE}" | tail -n 1
+  if [[ -f "${IMAGES_ENV_FILE}" ]]; then
+    sed -n "s/^${variable_name}=//p" "${IMAGES_ENV_FILE}" | tail -n 1
   fi
 }
 
@@ -59,7 +59,7 @@ rollback() {
   if [[ "${UPDATED}" == "true" && -f "${PREVIOUS_FILE}" ]]; then
     echo "이전 이미지 설정으로 롤백합니다."
 
-    cp "${PREVIOUS_FILE}" "${IMAGES_FILE}"
+    cp "${PREVIOUS_FILE}" "${IMAGES_ENV_FILE}"
 
     compose pull
     compose up -d --remove-orphans --wait
@@ -131,8 +131,8 @@ if ! flock -n 9; then
   exit 1
 fi
 
-if [[ -f "${IMAGES_FILE}" ]]; then
-  cp "${IMAGES_FILE}" "${PREVIOUS_FILE}"
+if [[ -f "${IMAGES_ENV_FILE}" ]]; then
+  cp "${IMAGES_ENV_FILE}" "${PREVIOUS_FILE}"
 fi
 
 TEMP_FILE="$(mktemp "${DEPLOY_DIR}/images.env.tmp.XXXXXX")"
@@ -141,7 +141,7 @@ printf 'FRONTEND_IMAGE=%s\n' "${FRONTEND_IMAGE}" > "${TEMP_FILE}"
 printf 'BACKEND_IMAGE=%s\n' "${BACKEND_IMAGE}" >> "${TEMP_FILE}"
 
 chmod 600 "${TEMP_FILE}"
-mv "${TEMP_FILE}" "${IMAGES_FILE}"
+mv "${TEMP_FILE}" "${IMAGES_ENV_FILE}"
 
 UPDATED=true
 
