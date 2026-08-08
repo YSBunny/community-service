@@ -2,10 +2,10 @@
 
 set -Eeuo pipefail
 
-DEPLOY_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-COMPOSE_FILE="${DEPLOY_DIR}/compose.yaml"
+DEPLOY_DIR="/home/ubuntu/server"
+COMPOSE_FILE="${DEPLOY_DIR}/deploy/compose.yaml"
 ENV_FILE="${DEPLOY_DIR}/.env"
-IMAGES_FILE="${DEPLOY_DIR}/images.env"
+IMAGES_ENV_FILE="${DEPLOY_DIR}/images.env"
 PREVIOUS_FILE="${DEPLOY_DIR}/images.env.previous"
 LOCK_FILE="${DEPLOY_DIR}/deploy.lock"
 
