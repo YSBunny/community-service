@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 import { signup } from "../api/userApi.js";
 import Header from "../components/Header.jsx";
+import useImagePreview from "../hooks/useImagePreview.js";
 import "../styles/SignupPage.css";
 
 // 이메일 검증 규칙
@@ -27,7 +28,7 @@ function SignupPage() {
     nickname: false
   });
   const [profileImage, setProfileImage] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState("");
+  const [previewUrl, updatePreview] = useImagePreview();
   const [imageError, setImageError] = useState("");
   const [serverError, setServerError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -98,25 +99,14 @@ function SignupPage() {
     if (selectedFile && !selectedFile.type.startsWith("image/")) {
       event.target.value = "";
       setProfileImage(null);
+      updatePreview(null);
       setImageError("* 이미지 파일만 선택할 수 있습니다.");
       return;
     }
 
     setProfileImage(selectedFile);
+    updatePreview(selectedFile);
   }
-
-  // 선택한 파일을 브라우저에서 미리 볼 수 있는 임시 URL로 만듭니다.
-  useEffect(() => {
-    if (!profileImage) {
-      setPreviewUrl("");
-      return;
-    }
-
-    const objectUrl = URL.createObjectURL(profileImage);
-    setPreviewUrl(objectUrl);
-
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [profileImage]);
 
   async function handleSubmit(event) {
     event.preventDefault();

@@ -11,19 +11,22 @@ function ProfileMenu({ user }) {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [profileImage, setProfileImage] = useState(user?.profileImage || "");
+  const [loadedProfile, setLoadedProfile] = useState({
+    userId: null,
+    profileImage: ""
+  });
 
   const userId = user?.userId || localStorage.getItem("userId");
+  const hasProvidedProfileImage = user?.profileImage !== undefined;
+  const profileImage = hasProvidedProfileImage
+    ? user.profileImage || ""
+    : loadedProfile.userId === userId
+      ? loadedProfile.profileImage
+      : "";
 
   // Header가 user를 받지 않은 페이지에서는 현재 사용자의 정보를 직접 조회
   useEffect(() => {
-    if (user?.profileImage !== undefined) {
-      setProfileImage(user.profileImage || "");
-      return;
-    }
-
-    if (!userId) {
-      setProfileImage("");
+    if (hasProvidedProfileImage || !userId) {
       return;
     }
 
@@ -35,13 +38,16 @@ function ProfileMenu({ user }) {
         const loadedUser = response?.user || response;
 
         if (!isCancelled) {
-          setProfileImage(loadedUser?.profileImage || "");
+          setLoadedProfile({
+            userId,
+            profileImage: loadedUser?.profileImage || ""
+          });
         }
       } catch (error) {
         // 조회에 실패하면 기본 이미지를 보여주고 메뉴의 다른 기능은 유지
         console.error("프로필 이미지 조회 실패:", error);
         if (!isCancelled) {
-          setProfileImage("");
+          setLoadedProfile({ userId, profileImage: "" });
         }
       }
     }
@@ -51,7 +57,7 @@ function ProfileMenu({ user }) {
     return () => {
       isCancelled = true;
     };
-  }, [userId, user?.profileImage]);
+  }, [hasProvidedProfileImage, userId]);
 
   // 메뉴 밖을 클릭하면 드롭다운을 닫음
   useEffect(() => {

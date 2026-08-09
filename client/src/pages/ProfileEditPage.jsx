@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router";
 import { deleteUser, getUser, updateUser } from "../api/userApi.js";
 import ConfirmModal from "../components/ConfirmModal.jsx";
 import Header from "../components/Header.jsx";
+import useImagePreview from "../hooks/useImagePreview.js";
 import { getProfileImageUrl, useDefaultProfileImage } from "../utils/imageUrl.js";
 import "../styles/ProfileEditPage.css";
 
@@ -18,7 +19,7 @@ function ProfileEditPage() {
   const [user, setUser] = useState(null);
   const [nickname, setNickname] = useState("");
   const [profileImage, setProfileImage] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState("");
+  const [previewUrl, updatePreview] = useImagePreview();
   const [nicknameTouched, setNicknameTouched] = useState(false);
   const [imageError, setImageError] = useState("");
   const [serverError, setServerError] = useState("");
@@ -69,18 +70,6 @@ function ProfileEditPage() {
   }, [userId]);
 
   useEffect(() => {
-    if (!profileImage) {
-      setPreviewUrl("");
-      return;
-    }
-
-    const objectUrl = URL.createObjectURL(profileImage);
-    setPreviewUrl(objectUrl);
-
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [profileImage]);
-
-  useEffect(() => {
     if (!showToast) {
       return;
     }
@@ -96,11 +85,13 @@ function ProfileEditPage() {
     if (selectedFile && !selectedFile.type.startsWith("image/")) {
       event.target.value = "";
       setProfileImage(null);
+      updatePreview(null);
       setImageError("* 이미지 파일만 선택할 수 있습니다.");
       return;
     }
 
     setProfileImage(selectedFile);
+    updatePreview(selectedFile);
   }
 
   async function handleSubmit(event) {
@@ -128,6 +119,7 @@ function ProfileEditPage() {
       setUser(updatedUser);
       setNickname(updatedUser.nickname || "");
       setProfileImage(null);
+      updatePreview(null);
       if (imageInputRef.current) {
         imageInputRef.current.value = "";
       }
