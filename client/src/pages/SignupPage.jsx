@@ -98,25 +98,23 @@ function SignupPage() {
     if (selectedFile && !selectedFile.type.startsWith("image/")) {
       event.target.value = "";
       setProfileImage(null);
+      setPreviewUrl("");
       setImageError("* 이미지 파일만 선택할 수 있습니다.");
       return;
     }
 
     setProfileImage(selectedFile);
+    setPreviewUrl(selectedFile ? URL.createObjectURL(selectedFile) : "");
   }
 
-  // 선택한 파일을 브라우저에서 미리 볼 수 있는 임시 URL로 만듭니다.
+  // 새 파일을 선택하거나 페이지를 벗어날 때 이전 임시 URL을 해제합니다.
   useEffect(() => {
-    if (!profileImage) {
-      setPreviewUrl("");
-      return;
-    }
-
-    const objectUrl = URL.createObjectURL(profileImage);
-    setPreviewUrl(objectUrl);
-
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [profileImage]);
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   async function handleSubmit(event) {
     event.preventDefault();

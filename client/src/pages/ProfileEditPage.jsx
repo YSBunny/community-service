@@ -69,16 +69,12 @@ function ProfileEditPage() {
   }, [userId]);
 
   useEffect(() => {
-    if (!profileImage) {
-      setPreviewUrl("");
-      return;
-    }
-
-    const objectUrl = URL.createObjectURL(profileImage);
-    setPreviewUrl(objectUrl);
-
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [profileImage]);
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   useEffect(() => {
     if (!showToast) {
@@ -96,11 +92,13 @@ function ProfileEditPage() {
     if (selectedFile && !selectedFile.type.startsWith("image/")) {
       event.target.value = "";
       setProfileImage(null);
+      setPreviewUrl("");
       setImageError("* 이미지 파일만 선택할 수 있습니다.");
       return;
     }
 
     setProfileImage(selectedFile);
+    setPreviewUrl(selectedFile ? URL.createObjectURL(selectedFile) : "");
   }
 
   async function handleSubmit(event) {
@@ -128,6 +126,7 @@ function ProfileEditPage() {
       setUser(updatedUser);
       setNickname(updatedUser.nickname || "");
       setProfileImage(null);
+      setPreviewUrl("");
       if (imageInputRef.current) {
         imageInputRef.current.value = "";
       }

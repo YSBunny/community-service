@@ -11,19 +11,20 @@ function ProfileMenu({ user }) {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [profileImage, setProfileImage] = useState(user?.profileImage || "");
+  const [loadedProfileImage, setLoadedProfileImage] = useState("");
 
   const userId = user?.userId || localStorage.getItem("userId");
+  const profileImage = user?.profileImage !== undefined
+    ? user.profileImage || ""
+    : loadedProfileImage;
 
   // Header가 user를 받지 않은 페이지에서는 현재 사용자의 정보를 직접 조회
   useEffect(() => {
     if (user?.profileImage !== undefined) {
-      setProfileImage(user.profileImage || "");
       return;
     }
 
     if (!userId) {
-      setProfileImage("");
       return;
     }
 
@@ -35,13 +36,13 @@ function ProfileMenu({ user }) {
         const loadedUser = response?.user || response;
 
         if (!isCancelled) {
-          setProfileImage(loadedUser?.profileImage || "");
+          setLoadedProfileImage(loadedUser?.profileImage || "");
         }
       } catch (error) {
         // 조회에 실패하면 기본 이미지를 보여주고 메뉴의 다른 기능은 유지
         console.error("프로필 이미지 조회 실패:", error);
         if (!isCancelled) {
-          setProfileImage("");
+          setLoadedProfileImage("");
         }
       }
     }

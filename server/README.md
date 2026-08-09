@@ -1,33 +1,22 @@
 # 냐르륵 Backend
 
-커뮤니티 서비스 **냐르륵**의 Spring Boot REST API 서버입니다.
+커뮤니티 서비스 **냐르륵**의 Spring Boot REST API 저장소입니다.
 
-회원·게시글·댓글·이미지 업로드 API를 제공하며, Spring Security와 JWT Access Token으로 인증·인가를 처리합니다. 로컬 개발에서는 H2를 사용하고, 배포 환경에서는 Spring Profile을 분리해 MySQL을 사용합니다.
+회원·게시글·댓글·이미지 API를 제공하며 Spring Security와 JWT Access Token으로 인증·인가를 처리합니다. 로컬에서는 H2, 운영 Docker Compose 환경에서는 MySQL을 사용합니다. `main` 브랜치 변경은 GitHub Actions에서 테스트와 빌드를 통과한 뒤 Docker 이미지로 만들어져 AWS EC2에 자동 배포됩니다.
 
 > API 진입 주소: `http://43.200.106.173/api`  
-> 운영 환경에서는 Nginx를 통해 접근하며 Spring Boot의 8080 포트는 외부에 직접 공개하지 않습니다.
-
-## 프로젝트에서 담당한 부분
-
-- REST API와 계층형 구조(Controller-Service-Repository) 설계
-- Spring Security와 JWT 기반 인증·인가 구현
-- 회원·게시글·댓글 도메인 및 JPA 연관관계 구현
-- DTO와 Bean Validation을 이용한 요청 검증
-- 프로필·게시글 이미지 업로드 및 정적 리소스 제공
-- H2와 MySQL 환경을 Spring Profile로 분리
-- Gradle 빌드와 JRE 실행 환경을 분리한 멀티스테이지 Dockerfile 작성
-- Docker Compose에서 MySQL 연결, 환경 변수 주입, 영속 Volume 구성
+> Spring Boot 8080 포트는 외부에 공개하지 않고 Nginx를 통해서만 접근합니다.
 
 ## 주요 기능
 
 | 영역 | 기능 |
 | --- | --- |
-| 인증 | 로그인, 로그아웃, JWT Access Token 발급 및 검증 |
+| 인증 | 로그인, 로그아웃, JWT Access Token 발급·검증 |
 | 회원 | 회원가입, 조회, 프로필 수정, 비밀번호 변경, 회원 탈퇴 |
 | 게시글 | 목록·상세 조회, 작성, 수정, 삭제, 이미지 업로드 |
 | 댓글 | 목록 조회, 작성, 수정, 삭제 |
-| 권한 | 인증 사용자와 작성자를 비교해 수정·삭제 권한 검증 |
-| 공통 | DTO 검증, 예외 응답, CORS, 업로드 파일 매핑 |
+| 인가 | 인증 사용자와 리소스 작성자를 비교해 수정·삭제 검증 |
+| 공통 | DTO 검증, 예외 처리, CORS, 업로드 파일 제공 |
 
 ## 기술 스택
 
@@ -41,8 +30,9 @@
 | Database | H2(local), MySQL(prod) |
 | Validation | Jakarta Bean Validation |
 | Build | Gradle, Gradle Wrapper |
-| Container | Docker, Docker Compose, 멀티스테이지 빌드 |
-| Infrastructure | AWS EC2, Nginx, Elastic IP |
+| Container | Docker, 멀티스테이지 빌드 |
+| CI/CD | GitHub Actions, GitHub Container Registry |
+| Infrastructure | AWS EC2, Docker Compose, Nginx |
 
 ## 프로젝트 구조
 
@@ -50,7 +40,7 @@
 src/
 ├── main/
 │   ├── java/.../community/
-│   │   ├── auth/        # 로그인, JWT 인증 필터와 토큰 처리
+│   │   ├── auth/        # 로그인, JWT 필터와 토큰 처리
 │   │   ├── user/        # 회원 도메인
 │   │   ├── post/        # 게시글 도메인
 │   │   ├── comment/     # 댓글 도메인
@@ -60,7 +50,7 @@ src/
 │       ├── application.yml
 │       ├── application-local.yml
 │       └── application-prod.yml
-└── test/                # 단위 및 통합 테스트
+└── test/                # 단위·통합 테스트
 ```
 
 ## 주요 API
@@ -68,7 +58,7 @@ src/
 | 도메인 | Method | 경로 | 설명 |
 | --- | --- | --- | --- |
 | 인증 | POST | `/api/auth/login` | 로그인 및 Access Token 발급 |
-| 인증 | POST | `/api/auth/logout` | 로그아웃 응답 처리 |
+| 인증 | POST | `/api/auth/logout` | 로그아웃 응답 |
 | 회원 | POST | `/api/users` | 회원가입 |
 | 회원 | GET | `/api/users/{userId}` | 회원 조회 |
 | 회원 | PATCH | `/api/users/{userId}` | 프로필 수정 |
@@ -85,12 +75,12 @@ src/
 
 ## 인증 및 인가 흐름
 
-1. 사용자가 이메일과 비밀번호로 로그인을 요청합니다.
-2. 서버가 비밀번호를 검증한 뒤 JWT Access Token을 발급합니다.
-3. 클라이언트는 인증 요청에 `Authorization: Bearer {token}`을 포함합니다.
+1. 이메일과 비밀번호로 로그인을 요청합니다.
+2. 서버가 비밀번호를 검증하고 JWT Access Token을 발급합니다.
+3. 클라이언트가 인증 요청에 `Authorization: Bearer {token}`을 포함합니다.
 4. JWT 필터가 토큰을 검증하고 `SecurityContext`에 인증 객체를 저장합니다.
-5. Spring Security URL 규칙과 서비스의 작성자 검증이 접근 가능 여부를 판단합니다.
-6. 유효한 인증이 없으면 `401 Unauthorized`, 인증되었지만 권한이 부족하면 `403 Forbidden`을 반환합니다.
+5. Spring Security 규칙과 서비스 계층의 작성자 검증이 요청을 허용하거나 거부합니다.
+6. 유효한 인증이 없으면 `401`, 인증되었지만 권한이 부족하면 `403`을 반환합니다.
 
 Refresh Token은 사용하지 않습니다. Access Token이 만료되면 사용자가 다시 로그인해야 합니다.
 
@@ -98,12 +88,12 @@ Refresh Token은 사용하지 않습니다. Access Token이 만료되면 사용�
 
 | Profile | Database | 용도 |
 | --- | --- | --- |
-| `local` | H2 | 로컬 개발 및 기능 확인 |
-| `prod` | MySQL | 배포 및 Docker Compose 환경 |
+| `local` | H2 | 로컬 개발과 기능 확인 |
+| `prod` | MySQL | Docker Compose 및 EC2 운영 환경 |
 
 - `application.yml`: 공통 설정
 - `application-local.yml`: H2 연결 설정
-- `application-prod.yml`: 환경 변수 기반 MySQL·JWT·업로드 경로 설정
+- `application-prod.yml`: 환경 변수 기반 MySQL·JWT·업로드 설정
 
 ## 로컬 실행
 
@@ -112,20 +102,20 @@ Refresh Token은 사용하지 않습니다. Access Token이 만료되면 사용�
 - JDK 21
 - 저장소에 포함된 Gradle Wrapper
 
-### macOS/Linux
+macOS/Linux:
 
 ```bash
 SPRING_PROFILES_ACTIVE=local ./gradlew bootRun
 ```
 
-### Windows PowerShell
+Windows PowerShell:
 
 ```powershell
 $env:SPRING_PROFILES_ACTIVE="local"
 ./gradlew.bat bootRun
 ```
 
-기본 API 주소는 `http://localhost:8080/api`이며, H2 Console 사용 여부와 경로는 실제 설정 파일을 기준으로 합니다.
+기본 주소는 `http://localhost:8080`이며 로컬 DB는 H2를 사용합니다.
 
 ### 테스트 및 빌드
 
@@ -134,61 +124,89 @@ $env:SPRING_PROFILES_ACTIVE="local"
 ./gradlew clean build
 ```
 
-빌드 결과는 `build/libs/`에 생성됩니다.
+실행 가능한 JAR은 `build/libs/`에 생성됩니다.
 
 ## 운영 환경 변수
-
-Docker Compose 또는 EC2 운영 환경에서 다음 값을 주입합니다.
 
 ```env
 SPRING_PROFILES_ACTIVE=prod
 SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/community_service
 SPRING_DATASOURCE_USERNAME=<DB_USERNAME>
 SPRING_DATASOURCE_PASSWORD=<DB_PASSWORD>
-JWT_SECRET=<SUFFICIENTLY_LONG_RANDOM_SECRET>
+JWT_SECRET=<BASE64_ENCODED_RANDOM_SECRET>
+JWT_EXPIRATION=3600000
 FILE_UPLOAD_DIR=/app/uploads
 ```
 
 ## Docker 멀티스테이지 빌드
 
-백엔드 Dockerfile은 다음 두 단계로 구성했습니다.
+| 단계 | 역할 |
+| --- | --- |
+| JDK/Gradle build stage | 테스트 또는 빌드 후 실행 가능한 JAR 생성 |
+| JRE runtime stage | JAR만 복사해 Spring Boot 실행 |
 
-1. **build stage**: JDK/Gradle 환경에서 실행 가능한 JAR 생성
-2. **runtime stage**: JRE 이미지에 JAR만 복사해 Spring Boot 실행
-
-빌드 도구와 소스 전체를 최종 이미지에서 제외해 운영 이미지의 크기와 공격 표면을 줄입니다.
+최종 이미지에서 빌드 도구와 전체 소스를 제외해 이미지 크기와 공격 표면을 줄였습니다.
 
 ```bash
-docker build -t nyareureuk-backend .
+docker build -t server-backend .
 ```
 
-## Docker Compose 연동
+운영에서는 MySQL·환경 변수·Volume을 함께 구성하는 통합 Docker Compose로 실행합니다.
+
+## Docker Compose 및 Nginx 연동
 
 | 항목 | 구성 |
 | --- | --- |
-| Backend service | `backend`, 내부 포트 8080 |
-| Database service | `db`, MySQL 8.4, 내부 포트 3306 |
-| DB volume | `mysql-data:/var/lib/mysql` |
-| Upload volume | `upload-data:/app/uploads` |
+| Backend | `backend`, 내부 포트 8080 |
+| Database | `db`, MySQL 내부 포트 3306 |
+| DB 연결 | `jdbc:mysql://db:3306/community_service` |
+| Upload path | `/app/uploads` |
 | Spring profile | `prod` |
 
-Spring Boot는 Compose 네트워크에서 호스트명이 아닌 서비스명 `db`로 MySQL에 연결합니다. 8080과 3306은 컨테이너 내부 통신에 사용하고 외부에는 직접 공개하지 않습니다.
+Compose 네트워크에서 `localhost`는 현재 컨테이너 자신이므로, Spring Boot는 호스트명이 아닌 서비스명 `db`로 MySQL에 연결합니다.
 
-## Nginx 연동
+외부 요청 흐름:
 
-외부 요청은 Nginx의 HTTP 80 포트로만 들어옵니다.
+- `/api/**` → Nginx → `backend:8080`
+- `/uploads/**` → Nginx → `backend:8080`
+- MySQL 3306과 Spring Boot 8080은 외부 미공개
 
-- `/api/**` → Spring Boot `backend:8080`
-- `/uploads/**` → Spring Boot `backend:8080`
-- 그 외 요청 → React 정적 파일
+## CI/CD
 
-이 구조는 API 서버와 DB를 인터넷에 직접 노출하지 않고, 프론트엔드와 API를 같은 Origin으로 제공합니다.
+`main` 브랜치 push를 기준으로 백엔드를 검증하고 동일한 Docker 이미지를 Registry에서 EC2까지 전달합니다.
 
-## 보안 및 운영 설정
+```mermaid
+flowchart TD
+    A["main push"] --> B["Gradle test · build"]
+    B --> C["Docker image build"]
+    C --> D["GHCR push"]
+    D --> E["EC2 deploy"]
+    E --> F["Compose pull · up"]
+```
 
-- JWT Secret, DB 계정, 비밀번호를 저장소에 커밋하지 않습니다.
+### CI 책임
+
+1. 소스 체크아웃 및 Java 21 설정
+2. Gradle Wrapper로 테스트와 빌드 수행
+3. 테스트가 성공한 커밋으로 멀티스테이지 Docker 이미지 생성
+4. 커밋 SHA 등 추적 가능한 태그와 배포용 태그를 GHCR에 push
+
+### CD 책임
+
+1. CI 성공 이후 SSH로 EC2 접속
+2. GHCR에서 새 백엔드 이미지 pull
+3. Docker Compose로 `backend` 서비스 재생성
+4. MySQL과 업로드 Named Volume은 유지
+5. 컨테이너 로그·상태 또는 API 응답 확인
+
+GitHub Actions가 동일 저장소의 GHCR Package를 게시할 때는 `GITHUB_TOKEN`과 `packages: write` 권한을 사용할 수 있습니다. EC2에서 private 이미지를 pull할 때 필요한 토큰은 `read:packages` 범위만 부여하고 GitHub Secrets 또는 서버 환경 파일로 관리합니다. 서로 다른 저장소의 Workflow를 호출하거나 private Package에 접근하는 경우에만 해당 작업에 필요한 별도 PAT를 사용합니다.
+
+## 보안 및 운영 원칙
+
+- DB 비밀번호, JWT Secret, PAT, SSH 키를 저장소에 커밋하지 않습니다.
+- Workflow의 `permissions`는 `contents: read`, `packages: write` 등 Job에 필요한 범위로 제한합니다.
 - 비밀번호는 단방향 해시로 저장합니다.
-- 클라이언트가 전송한 사용자 ID만 신뢰하지 않고 인증 주체와 리소스 작성자를 비교합니다.
+- 요청의 사용자 ID만 신뢰하지 않고 인증 주체와 리소스 작성자를 비교합니다.
 - 운영 CORS는 실제 프론트엔드 Origin만 허용합니다.
-- 업로드 파일과 MySQL 데이터는 Named Volume으로 영속화합니다.
-- EC2 보안 그룹은 서비스에 필요한 포트만 허용합니다. 현재 애플리케이션 진입 포트는 HTTP 80입니다.
+- MySQL 데이터와 업로드 파일은 Named Volume으로 영속화합니다.
+- EC2 보안 그룹은 현재 서비스 진입점인 HTTP 80만 애플리케이션용으로 공개합니다.
