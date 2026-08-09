@@ -2,6 +2,8 @@ package io.github.ysbunny.community.auth.service;
 
 import io.github.ysbunny.community.auth.dto.request.LoginRequest;
 import io.github.ysbunny.community.auth.dto.response.LoginResponse;
+import io.github.ysbunny.community.auth.exception.LoginErrorCode;
+import io.github.ysbunny.community.auth.exception.LoginException;
 import io.github.ysbunny.community.global.security.TokenProvider;
 import io.github.ysbunny.community.user.domain.Role;
 import io.github.ysbunny.community.user.domain.User;
@@ -88,46 +90,60 @@ class AuthServiceTest {
     void 존재하지_않는_이메일_로그인_실패() {
         // given
         LoginRequest request = new LoginRequest(
-                "selina.yang@ktb.com",
+                "unknown@example.com",
                 "password123!"
         );
 
+        // findByEmailAndDeletedAtIsNull는 미가입 회원과 탈퇴 회원 모두 Optional.empty()를 반환한다.
         when(userRepository.findByEmailAndDeletedAtIsNull(request.getEmail())).thenReturn(Optional.empty());
 
-        // when & then
-        assertThrows(IllegalArgumentException.class, () -> authService.login(request));
+        // when
+        LoginException exception = assertThrows(LoginException.class, () -> authService.login(request));
 
-        verify(userRepository, times(1)).findByEmailAndDeletedAtIsNull(request.getEmail());
+        // then
+        assertEquals(LoginErrorCode.INVALID_CREDENTIALS, exception.getErrorCode());
+
+        assertEquals("이메일 또는 비밀번호가 일치하지 않습니다.", exception.getMessage());
+
+        verify(userRepository).findByEmailAndDeletedAtIsNull(request.getEmail());
+
+        // 회원을 찾지 못하면 인증과 JWT 생성은 실행되지 않아야 한다.
+        verifyNoInteractions(authenticationManager, tokenProvider);
     }
 
     @Test
     void 비밀번호_불일치_로그인_실패() {
         // given
-        LoginRequest request = new LoginRequest(
-                "selina.yang@ktb.com",
-                "password123!"
-        );
+        LoginRequest request = new LoginRequest("user@example.com", "wrong-password");
 
         User user = new User(
-                "selina.yang@ktb.com",
-                "password123!",
-                "selina",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSo3sBLwV1edeVrDb7Kbq_XnkoPg-HwlKrhRvq5eEywaULeq8w670UEC7gG&s=10",
+                "user@example.com",
+                "encoded-password",
+                "사용자",
+                null,
                 Role.USER
         );
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                request.getEmail(),
-                request.getPassword()
-        );
+        UsernamePasswordAuthenticationToken loginToken =
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
 
         when(userRepository.findByEmailAndDeletedAtIsNull(request.getEmail())).thenReturn(Optional.of(user));
-        when(authenticationManager.authenticate(token)).thenThrow(new BadCredentialsException("Bad credentials"));
 
-        // when & then
-        assertThrows(BadCredentialsException.class, () -> authService.login(request));
+        when(authenticationManager.authenticate(loginToken)).thenThrow(new BadCredentialsException("Bad credentials"));
 
-        verify(userRepository, times(1)).findByEmailAndDeletedAtIsNull(request.getEmail());
-        verify(authenticationManager, times(1)).authenticate(token);
+        // when
+        LoginException exception = assertThrows(LoginException.class, () -> authService.login(request));
+
+        // then
+        assertEquals(LoginErrorCode.INVALID_CREDENTIALS, exception.getErrorCode());
+
+        assertEquals("이메일 또는 비밀번호가 일치하지 않습니다.", exception.getMessage());
+
+        verify(userRepository).findByEmailAndDeletedAtIsNull(request.getEmail());
+
+        verify(authenticationManager).authenticate(loginToken);
+
+        // 인증 실패 시 JWT가 생성되면 안 된다.
+        verify(tokenProvider, never()).createToken(org.mockito.ArgumentMatchers.any());
     }
 }
