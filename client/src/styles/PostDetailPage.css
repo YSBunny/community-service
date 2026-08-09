@@ -108,11 +108,11 @@
 }
 
 .post-detail__image {
-  width: auto;
-  height: auto;
-  max-width: 100%;
+  width: 100%;
+  max-height: 480px;
   margin-bottom: 24px;
   border-radius: 18px;
+  object-fit: cover;
 }
 
 .post-detail__content {

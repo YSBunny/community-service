@@ -70,8 +70,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
 
-                        // Health Check 허용
-                        .requestMatchers("/actuator/health").permitAll()
                         // 에러 허용
                         .requestMatchers("/error").permitAll()
                         // H2 콘솔 접근 허용

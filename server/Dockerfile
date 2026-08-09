@@ -10,9 +10,9 @@ COPY settings.gradle .
 
 RUN chmod +x gradlew
 
-COPY src src
+COPY src ./src
 
-RUN ./gradlew clean bootJar -x test --no-daemon
+RUN ./gradlew clean bootJar --no-daemon
 
 RUN JAR_FILE="$(find build/libs -maxdepth 1 \
     -name '*.jar' ! -name '*-plain.jar' | head -n 1)" \
@@ -24,13 +24,12 @@ FROM eclipse-temurin:21-jre-alpine AS runtime
 
 WORKDIR /app
 
-RUN apk add --no-cache curl \
-    && addgroup -S spring \
+RUN addgroup -S spring \
     && adduser -S spring -G spring \
     && mkdir -p /app/uploads \
     && chown -R spring:spring /app
 
-COPY --from=build /app/build/libs/*.jar app.jar
+COPY --from=build --chown=spring:spring /app/app.jar app.jar
 
 USER spring
 
