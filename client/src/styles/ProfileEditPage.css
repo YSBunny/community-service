@@ -50,7 +50,7 @@
   object-fit: cover;
   box-shadow:
     0 0 0 3px var(--primary),
-    0 12px 28px rgba(87, 57, 170, 0.18);
+    0 12px 28px rgba(91, 61, 132, 0.18);
 }
 
 .profile-image-input {
@@ -93,7 +93,7 @@
 }
 
 .profile-image-input:focus-visible + .profile-change-button {
-  outline: 3px solid rgba(123, 92, 255, 0.25);
+  outline: 3px solid rgba(192, 164, 254, 0.42);
   outline-offset: 3px;
 }
 

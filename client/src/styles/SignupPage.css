@@ -44,11 +44,11 @@
   width: 112px;
   height: 112px;
   margin: 0 auto;
-  border: 2px dashed #c9bcf7;
+  border: 2px dashed var(--primary);
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
   cursor: pointer;
-  box-shadow: 0 10px 24px rgba(123, 92, 255, 0.16);
+  box-shadow: 0 10px 24px rgba(91, 61, 132, 0.16);
 }
 
 .signup-section .profile-upload-button::before,
@@ -98,7 +98,7 @@
 }
 
 .signup-section .profile-input:focus-visible + .profile-upload-button {
-  outline: 3px solid rgba(123, 92, 255, 0.25);
+  outline: 3px solid rgba(192, 164, 254, 0.42);
   outline-offset: 3px;
 }
 

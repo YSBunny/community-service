@@ -16,7 +16,7 @@
   position: absolute;
   top: 22px;
   right: 28px;
-  color: #b7aadf;
+  color: var(--primary-dark);
   font-size: 10px;
   font-weight: 900;
   letter-spacing: 2px;
@@ -57,7 +57,7 @@
   gap: 14px;
   min-height: 64px;
   padding: 12px 14px;
-  border: 1px dashed #cfc4ef;
+  border: 1px dashed var(--primary);
   border-radius: 14px;
   background: var(--primary-pale);
 }
@@ -101,8 +101,8 @@
 }
 
 .file-button:hover {
-  border-color: rgba(123, 92, 255, 0.25);
-  background: #e5deff;
+  border-color: rgba(192, 164, 254, 0.55);
+  background: var(--primary-soft);
   color: var(--primary-dark);
   transform: translateY(-1px);
 }
