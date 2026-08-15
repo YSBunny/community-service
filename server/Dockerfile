@@ -24,7 +24,8 @@ FROM eclipse-temurin:21-jre-alpine AS runtime
 
 WORKDIR /app
 
-RUN addgroup -S spring \
+RUN apk add --no-cache curl \
+    && addgroup -S spring \
     && adduser -S spring -G spring \
     && mkdir -p /app/uploads \
     && chown -R spring:spring /app

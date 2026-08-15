@@ -27,3 +27,13 @@ logging:
 
 file:
   upload-dir: ${FILE_UPLOAD_DIR:/app/uploads}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+  endpoint:
+    health:
+      show-details: never
