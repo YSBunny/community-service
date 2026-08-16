@@ -110,7 +110,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of("http://127.0.0.1:5173", "http://localhost:5173"));
 
         // 허용할 HTTP 메서드 설정
-        configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 
         // 허용할 HTTP 헤더 설정
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
