@@ -22,12 +22,17 @@ public class Post {
     @Column(name = "post_id")
     private Long id;
 
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
     private String content;
+
+    @Column(name = "post_image")
     private String postImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User author;
 
     @OneToMany(mappedBy = "post")

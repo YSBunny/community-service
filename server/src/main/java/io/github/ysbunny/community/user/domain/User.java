@@ -22,13 +22,21 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
+    @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
     private String nickname;
+
+    @Column(name = "profile_image")
     private String profileImage;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    @Column(nullable = false)
+    private Role role = Role.USER;
 
     @OneToMany(mappedBy = "author")
     private List<Post> posts = new ArrayList<>();
