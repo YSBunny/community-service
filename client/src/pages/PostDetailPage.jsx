@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 
 import { createComment, deleteComment, getComments, updateComment } from "../api/commentApi.js";
-import { deletePost, getPost } from "../api/postApi.js";
+import { deletePost, deletePostReaction, getPost, setPostReaction } from "../api/postApi.js";
 import CommentItem from "../components/CommentItem.jsx";
 import ConfirmModal from "../components/ConfirmModal.jsx";
 import Header from "../components/Header.jsx";
@@ -25,6 +25,8 @@ function PostDetailPage() {
   const [isCommentSubmitting, setIsCommentSubmitting] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isReactionSubmitting, setIsReactionSubmitting] = useState(false);
+  const [reactionError, setReactionError] = useState("");
 
   useEffect(() => {
     let isCancelled = false;
@@ -44,7 +46,12 @@ function PostDetailPage() {
         }
 
         if (!isCancelled) {
-          setPost(loadedPost);
+          setPost({
+            ...loadedPost,
+            likeCount: loadedPost.likeCount ?? 0,
+            dislikeCount: loadedPost.dislikeCount ?? 0,
+            myReaction: loadedPost.myReaction ?? null
+          });
           setComments(loadedComments);
         }
       } catch (error) {
@@ -146,6 +153,32 @@ function PostDetailPage() {
     }
   }
 
+  async function handleReaction(type) {
+    if (isReactionSubmitting) {
+      return;
+    }
+
+    try {
+      setIsReactionSubmitting(true);
+      setReactionError("");
+
+      const response = post.myReaction === type
+        ? await deletePostReaction(postId)
+        : await setPostReaction(postId, type);
+
+      setPost((currentPost) => ({
+        ...currentPost,
+        likeCount: response.likeCount,
+        dislikeCount: response.dislikeCount,
+        myReaction: response.myReaction
+      }));
+    } catch (error) {
+      setReactionError(error.message || "반응을 처리하지 못했습니다.");
+    } finally {
+      setIsReactionSubmitting(false);
+    }
+  }
+
   if (isLoading) {
     return (
       <>
@@ -226,6 +259,46 @@ function PostDetailPage() {
             )}
             <p className="post-detail__content">{post.content}</p>
           </div>
+
+          <footer className="reaction-section">
+            <p className="reaction-section__title">이 게시글이 어땠나요?</p>
+
+            <div className="reaction-buttons">
+              <button
+                type="button"
+                className={`reaction-button reaction-button--like${
+                  post.myReaction === "LIKE" ? " is-selected" : ""
+                }`}
+                aria-pressed={post.myReaction === "LIKE"}
+                disabled={isReactionSubmitting}
+                onClick={() => handleReaction("LIKE")}
+              >
+                <span aria-hidden="true">👍</span>
+                <span>좋아요</span>
+                <strong>{post.likeCount}</strong>
+              </button>
+
+              <button
+                type="button"
+                className={`reaction-button reaction-button--dislike${
+                  post.myReaction === "DISLIKE" ? " is-selected" : ""
+                }`}
+                aria-pressed={post.myReaction === "DISLIKE"}
+                disabled={isReactionSubmitting}
+                onClick={() => handleReaction("DISLIKE")}
+              >
+                <span aria-hidden="true">👎</span>
+                <span>싫어요</span>
+                <strong>{post.dislikeCount}</strong>
+              </button>
+            </div>
+
+            {reactionError && (
+              <p className="reaction-error" role="alert">
+                {reactionError}
+              </p>
+            )}
+          </footer>
         </article>
 
         <section className="comment-section">

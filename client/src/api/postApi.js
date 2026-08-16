@@ -31,6 +31,21 @@ export function getPost(postId) {
   return request(`/posts/${postId}`, { method: "GET" });
 }
 
+// 게시글 반응 추가
+export function setPostReaction(postId, type) {
+  return request(`/posts/${postId}/reaction`, {
+    method: "PUT",
+    body: JSON.stringify({ type })
+  });
+}
+
+// 게시글 반응 삭제
+export function deletePostReaction(postId) {
+  return request(`/posts/${postId}/reaction`, {
+    method: "DELETE"
+  });
+}
+
 // 게시글 수정
 export function updatePost(postId, postData) {
   return request(`/posts/${postId}`, {
