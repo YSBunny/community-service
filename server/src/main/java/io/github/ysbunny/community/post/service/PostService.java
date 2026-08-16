@@ -6,6 +6,9 @@ import io.github.ysbunny.community.post.domain.Post;
 import io.github.ysbunny.community.post.dto.request.CreatePostRequest;
 import io.github.ysbunny.community.post.dto.request.UpdatePostRequest;
 import io.github.ysbunny.community.post.dto.response.*;
+import io.github.ysbunny.community.reaction.domain.PostReaction;
+import io.github.ysbunny.community.reaction.domain.ReactionType;
+import io.github.ysbunny.community.reaction.repository.PostReactionRepository;
 import io.github.ysbunny.community.user.domain.User;
 import io.github.ysbunny.community.post.repository.PostRepository;
 import io.github.ysbunny.community.user.repository.UserRepository;
@@ -20,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Validated
@@ -30,6 +34,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final PostReactionRepository postReactionRepository;
     private final FileService fileService;
 
     @Transactional
@@ -77,9 +82,25 @@ public class PostService {
         return new PostListResponse(postListItemResponses);
     }
 
-    public PostDetailResponse getPost(Long postId) {
+    public PostDetailResponse getPost(String loginEmail, Long postId) {
+        User user = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+
         Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post not found"));
+
+        Optional<PostReaction> optionalPostReaction =
+                postReactionRepository.findByPostIdAndUserId(post.getId(), user.getId());
+
+        ReactionType myReaction;
+
+        if (optionalPostReaction.isPresent()) {
+            PostReaction postReaction = optionalPostReaction.get();
+
+            myReaction = postReaction.getType();
+        } else {
+            myReaction = null;
+        }
 
         return new PostDetailResponse(
                 post.getId(),
@@ -90,6 +111,9 @@ public class PostService {
                 post.getAuthor().getNickname(),
                 post.getAuthor().getProfileImage(),
                 commentRepository.countByPostIdAndDeletedAtIsNull(postId),
+                postReactionRepository.countByPostIdAndType(postId, ReactionType.LIKE),
+                postReactionRepository.countByPostIdAndType(postId, ReactionType.DISLIKE),
+                myReaction,
                 post.getCreatedAt()
         );
     }

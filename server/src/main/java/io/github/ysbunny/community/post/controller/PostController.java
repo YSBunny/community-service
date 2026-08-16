@@ -34,8 +34,13 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public PostDetailResponse getPost(@PathVariable Long postId) {
-        return postService.getPost(postId);
+    public PostDetailResponse getPost(
+            Authentication authentication,
+            @PathVariable Long postId
+    ) {
+        String email = authentication.getName();
+
+        return postService.getPost(email, postId);
     }
 
     @PatchMapping("/{postId}")
