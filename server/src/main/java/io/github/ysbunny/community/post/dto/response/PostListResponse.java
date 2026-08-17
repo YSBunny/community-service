@@ -8,5 +8,6 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class PostListResponse {
+    private List<PostListItemResponse> popularPosts;
     private List<PostListItemResponse> posts;
 }

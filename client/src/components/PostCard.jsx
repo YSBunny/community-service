@@ -4,14 +4,21 @@ import { formatDate } from "../utils/formatDate.js";
 import { getProfileImageUrl, useDefaultProfileImage } from "../utils/imageUrl.js";
 import "../styles/PostListPage.css";
 
-function PostCard({ post }) {
+function PostCard({ post, isPopular = false }) {
   return (
     <Link to={`/posts/${post.postId}`} className="post-card__link">
       <article className="post-card">
         <div className="post-card__content">
           <div className="post-card__top">
             <div>
-              <h2 className="post-card__title">{post.title}</h2>
+              <h2 className="post-card__title">
+                {isPopular && (
+                  <span className="popular-post-badge">
+                    &lt;인기글&gt;
+                  </span>
+                )}
+                {post.title}
+              </h2>
               <div className="post-card__meta">
                 <span>댓글수 {post.commentCount ?? 0}</span>
                 <span>조회수 {post.viewCount ?? 0}</span>
