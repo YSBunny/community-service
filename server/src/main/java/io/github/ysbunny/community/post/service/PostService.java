@@ -67,10 +67,6 @@ public class PostService {
             String authorNickname = post.getAuthor().getNickname();
             String authorProfileImage = post.getAuthor().getProfileImage();
             Long commentCount = commentRepository.countByPostIdAndDeletedAtIsNull(postId);
-            long likeCount = postReactionRepository.countByPostIdAndType(
-                    postId,
-                    ReactionType.LIKE
-            );
             long viewCount = post.getViewCount();
             LocalDateTime createdAt = post.getCreatedAt();
 
@@ -80,7 +76,6 @@ public class PostService {
                     authorNickname,
                     authorProfileImage,
                     commentCount,
-                    likeCount,
                     viewCount,
                     createdAt
             );
