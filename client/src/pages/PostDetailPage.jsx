@@ -48,6 +48,7 @@ function PostDetailPage() {
         if (!isCancelled) {
           setPost({
             ...loadedPost,
+            viewCount: loadedPost.viewCount ?? 0,
             likeCount: loadedPost.likeCount ?? 0,
             dislikeCount: loadedPost.dislikeCount ?? 0,
             myReaction: loadedPost.myReaction ?? null
@@ -243,6 +244,7 @@ function PostDetailPage() {
               <time className="post-detail__date" dateTime={post.createdAt}>
                 {formatDate(post.createdAt)}
               </time>
+              <span>조회수 {post.viewCount.toLocaleString()}</span>
             </div>
           </header>
 
