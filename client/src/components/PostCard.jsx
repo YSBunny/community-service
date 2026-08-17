@@ -14,7 +14,6 @@ function PostCard({ post }) {
               <h2 className="post-card__title">{post.title}</h2>
               <div className="post-card__meta">
                 <span>댓글수 {post.commentCount ?? 0}</span>
-                <span>좋아요 {post.likeCount ?? 0}</span>
                 <span>조회수 {post.viewCount ?? 0}</span>
               </div>
             </div>
