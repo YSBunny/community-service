@@ -22,6 +22,7 @@ public class PostDetailResponse {
     private long likeCount;
     private long dislikeCount;
     private ReactionType myReaction;
+    private long viewCount;
 
     private LocalDateTime createdAt;
 }

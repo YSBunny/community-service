@@ -16,6 +16,7 @@ public class PostListItemResponse {
 
     private Long commentCount;
     private long likeCount;
+    private long viewCount;
 
     private LocalDateTime createdAt;
 }

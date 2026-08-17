@@ -71,6 +71,7 @@ public class PostService {
                     postId,
                     ReactionType.LIKE
             );
+            long viewCount = post.getViewCount();
             LocalDateTime createdAt = post.getCreatedAt();
 
             PostListItemResponse item = new PostListItemResponse(
@@ -80,6 +81,7 @@ public class PostService {
                     authorProfileImage,
                     commentCount,
                     likeCount,
+                    viewCount,
                     createdAt
             );
             postListItemResponses.add(item);
@@ -87,9 +89,16 @@ public class PostService {
         return new PostListResponse(postListItemResponses);
     }
 
+    @Transactional
     public PostDetailResponse getPost(String loginEmail, Long postId) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(loginEmail)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
+
+        int updatedCount = postRepository.incrementViewCount(postId);
+
+        if (updatedCount == 0) {
+            throw new IllegalArgumentException("post not found");
+        }
 
         Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post not found"));
@@ -119,6 +128,7 @@ public class PostService {
                 postReactionRepository.countByPostIdAndType(postId, ReactionType.LIKE),
                 postReactionRepository.countByPostIdAndType(postId, ReactionType.DISLIKE),
                 myReaction,
+                post.getViewCount(),
                 post.getCreatedAt()
         );
     }

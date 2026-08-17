@@ -31,6 +31,9 @@ public class Post {
     @Column(name = "post_image")
     private String postImage;
 
+    @Column(name = "view_count", nullable = false)
+    private long viewCount = 0L;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User author;
