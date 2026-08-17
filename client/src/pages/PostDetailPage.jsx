@@ -241,10 +241,23 @@ function PostDetailPage() {
                 onError={useDefaultProfileImage}
               />
               <span className="author-name">{post.authorNickname}</span>
-              <time className="post-detail__date" dateTime={post.createdAt}>
-                {formatDate(post.createdAt)}
-              </time>
-              <span>조회수 {post.viewCount.toLocaleString()}</span>
+              <div className="post-detail__meta">
+                <time className="post-detail__date" dateTime={post.createdAt}>
+                  {formatDate(post.createdAt)}
+                </time>
+                <span className="post-detail__views" title="조회수">
+                  <svg
+                    className="post-detail__views-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path d="M2.4 12s3.5-6 9.6-6 9.6 6 9.6 6-3.5 6-9.6 6-9.6-6-9.6-6Z" />
+                    <circle cx="12" cy="12" r="2.6" />
+                  </svg>
+                  <span>조회</span>
+                  <strong>{post.viewCount.toLocaleString()}</strong>
+                </span>
+              </div>
             </div>
           </header>
 
