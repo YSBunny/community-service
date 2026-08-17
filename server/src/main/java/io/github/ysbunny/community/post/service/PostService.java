@@ -20,10 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Validated
@@ -36,6 +35,8 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final PostReactionRepository postReactionRepository;
     private final FileService fileService;
+
+    private static final int POPULAR_POST_LIMIT = 2;
 
     @Transactional
     public Long createPost(String loginEmail, CreatePostRequest request) {
@@ -57,31 +58,75 @@ public class PostService {
     }
 
     public PostListResponse getPostList() {
-        List<Post> posts = postRepository.findAllByDeletedAtIsNullOrderByCreatedAtDesc();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime twentyFourHoursAgo = now.minusHours(24);
 
-        List<PostListItemResponse> postListItemResponses = new ArrayList<>();
+        // 1. 전체 게시글을 최신순으로 가져온다.
+        List<Post> allPosts = postRepository.findAllByDeletedAtIsNullOrderByCreatedAtDesc();
 
-        for (Post post : posts) {
-            Long postId = post.getId();
-            String postTitle = post.getTitle();
-            String authorNickname = post.getAuthor().getNickname();
-            String authorProfileImage = post.getAuthor().getProfileImage();
-            Long commentCount = commentRepository.countByPostIdAndDeletedAtIsNull(postId);
-            long viewCount = post.getViewCount();
-            LocalDateTime createdAt = post.getCreatedAt();
+        // 2. 최근 24시간 게시글과 점수를 저장할 공간을 만든다.
+        List<Post> recentPosts = new ArrayList<>();
+        Map<Long, Double> popularityScores = new HashMap<>();
 
-            PostListItemResponse item = new PostListItemResponse(
-                    postId,
-                    postTitle,
-                    authorNickname,
-                    authorProfileImage,
-                    commentCount,
-                    viewCount,
-                    createdAt
-            );
-            postListItemResponses.add(item);
+        // 3. 전체 게시글 중 최근 24시간 글만 골라 점수를 계산한다.
+        for (Post post : allPosts) {
+            boolean createdWithin24Hours = !post.getCreatedAt().isBefore(twentyFourHoursAgo);
+
+            if (!createdWithin24Hours) {
+                continue;
+            }
+
+            long likeCount = postReactionRepository.countByPostIdAndType(post.getId(), ReactionType.LIKE);
+
+            double score = calculatePopularityScore(post, likeCount, now);
+
+            recentPosts.add(post);
+            popularityScores.put(post.getId(), score);
         }
-        return new PostListResponse(postListItemResponses);
+
+        // 4. 인기 점수가 높은 순으로 정렬한다.
+        recentPosts.sort((firstPost, secondPost) -> {
+            double firstScore = popularityScores.get(firstPost.getId());
+            double secondScore = popularityScores.get(secondPost.getId());
+
+            int scoreComparison = Double.compare(secondScore, firstScore);
+
+            // 점수가 다르면 점수가 높은 글을 앞으로 보낸다.
+            if (scoreComparison != 0) {
+                return scoreComparison;
+            }
+
+            // 점수가 같으면 최근 작성 글을 앞으로 보낸다.
+            return secondPost.getCreatedAt().compareTo(firstPost.getCreatedAt());
+        });
+
+        // 5. 최대 2개까지만 인기글로 선정한다.
+        int popularPostCount = Math.min(POPULAR_POST_LIMIT, recentPosts.size());
+
+        List<PostListItemResponse> popularPosts = new ArrayList<>();
+
+        Set<Long> popularPostIds = new HashSet<>();
+
+        for (int index = 0; index < popularPostCount; index++) {
+            Post popularPost = recentPosts.get(index);
+
+            popularPosts.add(createListItem(popularPost));
+            popularPostIds.add(popularPost.getId());
+        }
+
+        // 6. 인기글을 제외한 나머지를 일반 게시글로 만든다.
+        List<PostListItemResponse> normalPosts = new ArrayList<>();
+
+        for (Post post : allPosts) {
+            if (popularPostIds.contains(post.getId())) {
+                continue;
+            }
+
+            normalPosts.add(createListItem(post));
+        }
+
+        // 7. 인기글과 일반 게시글을 나누어 반환한다.
+        return new PostListResponse(popularPosts, normalPosts);
     }
 
     @Transactional
@@ -169,5 +214,32 @@ public class PostService {
         post.delete();
 
         return new DeletePostResponse("delete_success");
+    }
+
+    private double calculatePopularityScore(Post post, long likeCount, LocalDateTime now) {
+        long elapsedMinutes = Duration.between(post.getCreatedAt(), now).toMinutes();
+
+        // 작성 직후에는 0으로 나누지 않도록 최소 60분으로 처리
+        elapsedMinutes = Math.max(elapsedMinutes, 60);
+
+        double elapsedDays = elapsedMinutes / 1440.0;
+
+        double activityScore = (likeCount * 2.0) + post.getViewCount();
+
+        return activityScore / elapsedDays;
+    }
+
+    private PostListItemResponse createListItem(Post post) {
+        Long postId = post.getId();
+
+        return new PostListItemResponse(
+                postId,
+                post.getTitle(),
+                post.getAuthor().getNickname(),
+                post.getAuthor().getProfileImage(),
+                commentRepository.countByPostIdAndDeletedAtIsNull(postId),
+                post.getViewCount(),
+                post.getCreatedAt()
+        );
     }
 }
