@@ -2,7 +2,6 @@ package io.github.ysbunny.community.reaction.service;
 
 import io.github.ysbunny.community.post.domain.Post;
 import io.github.ysbunny.community.post.repository.PostRepository;
-import io.github.ysbunny.community.reaction.domain.PostReaction;
 import io.github.ysbunny.community.reaction.domain.ReactionType;
 import io.github.ysbunny.community.reaction.dto.response.ReactionResponse;
 import io.github.ysbunny.community.reaction.repository.PostReactionRepository;
@@ -11,8 +10,6 @@ import io.github.ysbunny.community.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,15 +29,7 @@ public class PostReactionService {
         User user = getUser(loginEmail);
         Post post = getPost(postId);
 
-        Optional<PostReaction> optionalPostReaction = postReactionRepository.findByPostIdAndUserId(postId, user.getId());
-
-        if (optionalPostReaction.isPresent()) {
-            PostReaction postReaction = optionalPostReaction.get();
-
-            postReaction.changeType(type);
-        } else {
-            postReactionRepository.save(new PostReaction(post, user, type));
-        }
+        postReactionRepository.upsertReaction(post.getId(), user.getId(), type.name());
 
         return createResponse(postId, type);
     }
